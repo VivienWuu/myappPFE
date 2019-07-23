@@ -11,6 +11,15 @@ var staffSchema = new mongoose.Schema({
   statusOfStaff:{type:Array}
 },{versionKey:false});
 
+var projectSchema = new mongoose.Schema({
+  nameOfProject:{type:String,required:true},
+  startdateOfProject:{type:Number,required:true},
+  enddateOfProject:{type:Number,required:true},
+  hourOfProjct:{type:Array}
+},{versionKey:false});
+
 var staffmodel = mongoose.model('staffmodel',staffSchema,'STAFF');
+var projectmodel = mongoose.model('projectmodel',projectSchema,'PROJECT');
 
 module.exports.staffmodel = staffmodel; 
+module.exports.projectmodel = projectmodel;

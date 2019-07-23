@@ -1,66 +1,69 @@
-// 请求路由：人员清单
+// ROUTER : hr.ejs
 var express = require("express");
 var router = express.Router();
 
-var db = require("../database/models.js");// 声明mongoDB数据库的变量
+var db = require("../database/models.js");
+
+// VARIABLE : today with correct format: "1970-01-01" -> 19700101 
 var date = new Date();
 var today = date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
 
-// 获取所有人员数据
+// FUNC : get all staff information of today
+// REQ : NONE
+// RES : JSON of all staff info in today 
 router.get("/getAllStaff",function (req,res,next) {
-  db.staffmodel.find(function(err,documents){
-    if(err) return console.error(err);
-    res.json(format(documents,today));
+  db.staffmodel.find(function(err,documents) {
+    if (err) return console.error(err);
+    res.json(format(documents,today));  
   })
 });
 
-// 增加一名新人员
+// FUNC : add a new staff in database
+// REQ : JSON {idStaff,nameOfStaff,postOfStaff,groupOfStaff,majorOfStaff}
+// RES : JSON {SUCCESS:1/0} add success or fail
 router.get('/addOneStaff',function(req,res,next) {
-  db.staffmodel.findOne({idStaff:req.query.idStaff},function(err,result){
-    if(result){
+  db.staffmodel.findOne({idStaff:req.query.idStaff},function(err,result) {
+    if (err) return console.error(err);
+    if (result) {
       res.json({SUCCESS:0});
-    }else {
-      var oneStaff = {
-        "idStaff":req.query.idStaff,
-        "nameOfStaff":req.query.nameOfStaff,
-        "majorOfStaff":req.query.majorOfStaff,
-        "postOfStaff":req.query.postOfStaff,
-        "groupOfStaff":req.query.groupOfStaff,
-        "statusOfStaff":[]
-      };
-      var newStaff = db.staffmodel(oneStaff);
-      newStaff.save(function(err){
+    } else {
+      req.query["statusOfStaff"] = [];
+      var newStaff = db.staffmodel(req.query);
+      newStaff.save(function(err) {
         if (err) return console.error(err);
       });
-      res.json({SUCCESS:1});
-    }
-  })
-});
-// 改变人员属性
-router.get('/changeStaffValue',function(req,res,next){
-  db.staffmodel.updateOne({idStaff:req.query.idStaff},req.query,function(err,result){
-    if(err){
-      res.json({SUCCESS:0});
-    }else{
       res.json({SUCCESS:1});
     }
   });
 });
 
-// 改变人员的状态
-router.get('/changeStaffStatus',function(req,res,next){
-  db.staffmodel.findOne({idStaff:req.query.idStaff},function(err,result){
-    req.query.date = parseInt(req.query.date);
-    if (result && result.statusOfStaff !=[] && req.query.reason == "在岗") {
+// FUNC : change one staff attributes
+// REQ : JSON {idStaff,nameOfStaff,postOfStaff,groupOfStaff,majorOfStaff}
+// RES : ISON {SUCCESS:1/0} change success or fail
+router.get('/changeStaffValue',function(req,res,next) {
+  db.staffmodel.updateOne({idStaff:req.query.idStaff},req.query,function(err,result) {
+    if (err) {
+      res.json({SUCCESS:0});
+    } else {
+      res.json({SUCCESS:1});
+    }
+  });
+});
+
+// FUNC : change one staff status of one day
+// REQ : JSON {idStaff,date,reason}
+// RES : JSON {SUCCESS:1/0/-1} add a special status or change status fail or delete a special status
+router.get('/changeStaffStatus',function(req,res,next) {
+  db.staffmodel.findOne({idStaff:req.query.idStaff},function(err,result) {
+    req.query.date = parseInt(req.query.date); // transfer date form String to Number
+    if (result && result.statusOfStaff !=[] && req.query.reason == "在岗") { 
       var indexList = -1;
       for (i=0;i<result.statusOfStaff.length;i++) {
         if(req.query.date == result.statusOfStaff[i].date){
           indexList = i;
+          result.statusOfStaff.splice(indexList,1);
           break;
         }
-      }
-      if(indexList !=-1) {
-        result.statusOfStaff.splice(indexList,1);
       }
       result.save();
       res.json({SUCCESS:-1});
@@ -75,12 +78,12 @@ router.get('/changeStaffStatus',function(req,res,next){
       for (i=0;i<result.statusOfStaff.length;i++) {
         if(req.query.date == result.statusOfStaff[i].date){
           indexList = i;
+          result.statusOfStaff.splice(indexList,1);
+          result.statusOfStaff.push({date:req.query.date,reason:req.query.reason});
+          break;
         }
       }
-      if (indexList !=-1) {
-        result.statusOfStaff.splice(indexList,1);
-        result.statusOfStaff.push({date:req.query.date,reason:req.query.reason});
-      }else {
+      if (indexList == -1) {
         result.statusOfStaff.push({date:req.query.date,reason:req.query.reason});
       }
       result.save();
@@ -91,40 +94,43 @@ router.get('/changeStaffStatus',function(req,res,next){
   });
 });
 
-// 搜索人员的状态
-router.get('/searchStaffStatus',function(req,res,next){
-  db.staffmodel.findOne({idStaff:req.query.idStaff},function(err,result){
-    if(result){
+// FUNC : search one staff 's staff used in laydate
+// REQ : JSON {idStaff}
+// RES : ARRAY statusOfStaff or JSON {SUCCESS:0}
+router.get('/searchStaffStatus',function(req,res,next) {
+  db.staffmodel.findOne({idStaff:req.query.idStaff},function(err,result) {
+    if (result) {
       res.json(result.statusOfStaff);  
-    }else {
+    } else {
       res.json({SUCCESS:0});
     }    
   });
 });
 
-// 删除一名人员
-router.get('/deleteOneStaff',function(req,res,next){
-  db.staffmodel.findOneAndDelete({idStaff:req.query.idStaff},function(err,result){
-    if(result){
+// FUNC : delete a staff 
+// REQ : JSON {idStaff}
+// RES : JSON {SUCCESS:1/0} delete success or fail
+router.get('/deleteOneStaff',function(req,res,next) {
+  db.staffmodel.findOneAndDelete({idStaff:req.query.idStaff},function(err,result) {
+    if (result) {
       res.json({SUCCESS:1});
-    }else {
+    } else {
       res.json({SUCCESS:0});
     }
   });
 });
 
-// 数据前后端格式化：搜索到的数据库数据-> 前端使用的数据
-// docsInDB list 数据库数据集合
-// dateCompare Int 进行对比的日期
-function format(docsInDB,targetDate) {
+// FUNC : transfer docs in database to front-end  
+// INPUT : ARRAY documents searched from database 
+//         NUMBER target date to transfer format  
+// OUTPUT : 
+function format(docsInDB,targetDate) { 
   var docsInWeb = docsInDB;
-  for(i=0;i<docsInDB.length;i++){
-    if(docsInDB[i].statusOfStaff.length == 0){
-      docsInWeb[i].statusOfStaff = "在岗";
-    }else {
-      docsInWeb[i].statusOfStaff = "在岗"
-      for(j=0;j<docsInDB[i].statusOfStaff.length;j++){
-        if(targetDate == docsInDB[i].statusOfStaff[j].date){
+  for (i=0;i<docsInDB.length;i++) {
+    docsInWeb[i].statusOfStaff = "在岗";
+    if (docsInDB[i].statusOfStaff.length != 0) {
+      for (j=0;j<docsInDB[i].statusOfStaff.length;j++) {
+        if (targetDate == docsInDB[i].statusOfStaff[j].date) {
           docsInWeb[i].statusOfStaff = docsInDB[i].statusOfStaff[j].reason;
         }
       }

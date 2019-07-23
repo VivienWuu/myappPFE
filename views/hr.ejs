@@ -57,7 +57,6 @@
       <div class="layui-btn-container">
         <button class="layui-btn layui-btn-sm" lay-event="addOneStaff">添加一名人员</button>
         <input id="add_status" value="" hidden="hidden">
-        <input id="change">
       </div>
     </script> 
     <script type="text/html" id="barStaffTable">
@@ -117,6 +116,7 @@ layui.use('table', function(){
           ,success:function(layero,index){}
           ,end:function(){
             var add_status = $("#add_status").val();
+            console.log(add_status);
             if(add_status == "1"){
               layer.msg('添加成功！',{
                     time: 2000 
@@ -153,7 +153,8 @@ layui.use('table', function(){
           ,success:function(){}
           ,end:function(){
             layui.data('document', null);
-            var ifChangeValue = $("#ifCHangeValue").val();
+            var ifChangeValue = $("#ifChangeValue").val();
+            console.log(ifChangeValue);
             if(ifChangeValue == "1"){
               layer.msg('编辑成功！',{
                     time: 2000 
@@ -203,12 +204,6 @@ layui.use('table', function(){
         });
       break;
     };
-    if(obj.event === 'del'){
-      layer.confirm('真的删除行么', function(index){
-        obj.del();
-        layer.close(index);
-      });
-    }
   });
 });
 layui.use('element', function(){
