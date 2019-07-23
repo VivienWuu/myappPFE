@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/layui_dist/css/layui.css">
+  <style>
+    #dateChoose .layui-laydate-main{
+      width: 400px;
+    }
+    #dateChoose .layui-laydate-content td,#dateChoose .layui-laydate-content th {
+      width:1000px;
+    }
+    #idCurrent,#nameCurrent,#majorCurrent,#postCurrent,#groupCurrent {
+      width: 100px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+<form action="" class="layui-form">
+  <div class="layui-form-item">
+    <label class="layui-form-label">职编：</label>
+    <div class="layui-form-label" id="idCurrent">占位符</div>
+    <label class="layui-form-label">姓名：</label>
+    <div class="layui-form-label" id="nameCurrent">占位符</div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">专业：</label>
+    <div class="layui-form-label" id="majorCurrent">占位符</div>
+    <label class="layui-form-label">组别：</label>
+    <div class="layui-form-label" id="groupCurrent">占位符</div>
+  </div>
+    <div class="layui-form-item">
+    <label class="layui-form-label">岗位名称：</label>
+     <div class="layui-form-label" id="postCurrent">占位符</div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">状态：</label>
+    <div class="layui-input-block">
+      <input type="radio" name="statusOfStaff" value="在岗" title="在岗">
+      <input type="radio" name="statusOfStaff" value="请假" title="请假">
+      <input type="radio" name="statusOfStaff" value="培训" title="培训">
+    </div>
+  </div>
+  
+  <div class="layui-form-item">
+    <div class="layui-inline" id="dateChoose"></div>
+    <button class="layui-btn" lay-submit="" lay-filter="changeForm">变更状态</button>
+  </div>
+</form>
+<script src="/layui_dist/layui.js"></script>
+<script>
+layui.use(['laydate','form','jquery'],function(){
+  var laydate = layui.laydate;
+  var form = layui.form;
+  var $ = layui.$;
+  
+  // 父子页面传参
+  var openedDocument = layui.data('openedDocument');
+  $("#idCurrent")[0].innerHTML = openedDocument.idStaff;
+  $("#nameCurrent")[0].innerHTML = openedDocument.nameOfStaff;
+  $("#postCurrent")[0].innerHTML = openedDocument.postOfStaff;
+  $("#majorCurrent")[0].innerHTML = openedDocument.majorOfStaff;
+  $("#groupCurrent")[0].innerHTML = openedDocument.groupOfStaff;
+  
+  // 请求人员状态数据
+  var staffStatus = {};
+  var date = new Date();
+  var targetDate = date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();;
+  $.ajax({
+    type: "get",
+    async: false,
+    url: "/staff/searchStaffStatus",
+    data: {idStaff:openedDocument.idStaff},
+    dataType: "json",
+    success: function (res) {
+      for(i=0;i<res.length;i++){
+        var yearInLaydate = parseInt(res[i].date/10000);
+        var monthInLaydate = parseInt((res[i].date - yearInLaydate*10000)/100);
+        var dayInLaydate =  parseInt(res[i].date - yearInLaydate * 10000 - monthInLaydate * 100);
+        var dateinLaydate = yearInLaydate + "-" + monthInLaydate + "-" + dayInLaydate;
+          staffStatus[dateinLaydate] = res[i].reason;
+      }
+    }
+  });
+  laydate.render({
+    elem:"#dateChoose"
+    ,position: 'static'
+    ,showBottom: false
+    ,mark:staffStatus
+    ,done:function(value){
+      targetDate = parseInt(value.slice(0,4)) * 10000 + parseInt(value.slice(5,7)) * 100 + parseInt(value.slice(8,10));
+      console.log(targetDate);
+    }
+  });
+  form.on("submit(changeForm)",function(data){
+    var dataFromForm = {idStaff:openedDocument.idStaff,date:targetDate,reason:data.field.statusOfStaff};
+    $.ajax({
+      type: "get",
+      url: "/staff/changeStaffStatus",
+      data: dataFromForm,
+      dataType: "json"
+    });
+  });
+}); 
+</script>
+</body>
+</html>
