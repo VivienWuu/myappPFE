@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/layui_dist/css/layui.css">
+</head>
+<body>
+  <form class="layui-form" action="">
+    <div class="layui-form-item">
+      <label class="layui-form-label">职编</label>
+      <div class="layui-input-block"><input type="text" name="idStaff" lay-verify="required" lay-reqtext="请输入人员职编" autocomplete="off" class="layui-input"></div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">姓名</label>
+      <div class="layui-input-block"><input type="text" name="nameOfStaff" lay-verify="required" lay-reqtext="请输入人员姓名" autocomplete="off" class="layui-input"></div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">岗位名称</label>
+      <div class="layui-input-block"><input type="text" name="postOfStaff" lay-verify="required" lay-reqtext="请输入人员岗位名称" autocomplete="off" class="layui-input"></div>
+    </div> 
+    <div class="layui-form-item">
+      <label class="layui-form-label">组别</label>
+      <div class="layui-input-block">
+        <input type="radio" name="groupOfStaff" value="领班" title="领班">
+        <input type="radio" name="groupOfStaff" value="排故工程师" title="排故工程师">
+        <input type="radio" name="groupOfStaff" value="ME/CB" title="ME/CB">
+        <input type="radio" name="groupOfStaff" value="AV" title="AV">
+        <input type="radio" name="groupOfStaff" value="STR" title="STR">
+        <input type="radio" name="groupOfStaff" value="工卡与计划室" title="工卡与计划室">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">专业</label>
+      <div class="layui-input-block">
+        <input type="radio" name="majorOfStaff" value="ME" title="ME">
+        <input type="radio" name="majorOfStaff" value="AV" title="AV">
+        <input type="radio" name="majorOfStaff" value="CB" title="CB">
+        <input type="radio" name="majorOfStaff" value="STR" title="STR">
+        <input type="radio" name="majorOfStaff" value="" title="暂无">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn" lay-submit="" lay-filter="addForm">添加成员</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      </div>
+    </div>
+  </form>
+<script src="/layui_dist/layui.js"></script>
+<script>
+layui.use('form',function(){
+  var form = layui.form;
+  var $ = layui.$;
+  var $$ = parent.layui.$;
+  form.on('submit(addForm)',function(data){
+    var dataFromForm = data.field;
+    console.log(dataFromForm);
+    $.ajax({
+      url:'/staff/addOneStaff',
+      type:'get',
+      data:dataFromForm,
+      dataType:'json',
+      success:function(res){
+        var thisIframe = parent.layer.getFrameIndex(window.name);
+        if(res.SUCCESS == 1) {
+          $$("#add_status").val("1");
+          parent.layui.layer.close(thisIframe);
+        }else{
+          $$("#add_status").val("0");
+          parent.layer.close(thisIframe);
+        } 
+      }
+    })
+  });
+});
+</script>
+</body>
+</html>
