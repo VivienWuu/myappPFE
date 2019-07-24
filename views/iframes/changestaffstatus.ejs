@@ -56,7 +56,7 @@ layui.use(['laydate','form','jquery'],function(){
   var form = layui.form;
   var $ = layui.$;
   
-  // 父子页面传参
+  // get staff info from father webpage
   var openedDocument = layui.data('openedDocument');
   $("#idCurrent")[0].innerHTML = openedDocument.idStaff;
   $("#nameCurrent")[0].innerHTML = openedDocument.nameOfStaff;
@@ -64,7 +64,7 @@ layui.use(['laydate','form','jquery'],function(){
   $("#majorCurrent")[0].innerHTML = openedDocument.majorOfStaff;
   $("#groupCurrent")[0].innerHTML = openedDocument.groupOfStaff;
   
-  // 请求人员状态数据
+  // get staff status from database and display in laydate
   var staffStatus = {};
   var date = new Date();
   var targetDate = date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();;
@@ -80,7 +80,7 @@ layui.use(['laydate','form','jquery'],function(){
         var monthInLaydate = parseInt((res[i].date - yearInLaydate*10000)/100);
         var dayInLaydate =  parseInt(res[i].date - yearInLaydate * 10000 - monthInLaydate * 100);
         var dateinLaydate = yearInLaydate + "-" + monthInLaydate + "-" + dayInLaydate;
-          staffStatus[dateinLaydate] = res[i].reason;
+        staffStatus[dateinLaydate] = res[i].reason;
       }
     }
   });

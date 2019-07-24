@@ -29,8 +29,8 @@ function statusOfStaffInDay(docsInDB,targetDate){
     } else { // special status
       var isWork = 1;
       for (j=0;j<docsInDB[i].statusOfStaff.length;j++) {
-        if (targetDate == docsInDB[i].statusOfStaff[j].date) { // 判断日期与状态
-          var groupOfthisStaff = groupArray.indexOf(docsInDB[i].groupOfStaff); // 确定该人员组别在groupArray中的位置
+        if (targetDate == docsInDB[i].statusOfStaff[j].date) { // if date in special status
+          var groupOfthisStaff = groupArray.indexOf(docsInDB[i].groupOfStaff); // get group of staff
           if (docsInDB[i].statusOfStaff[j].reason == statusArray[2][0]) {
             statusArray[2][groupOfthisStaff]  = statusArray[2][groupOfthisStaff] + 1;
             isWork = 0;

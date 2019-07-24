@@ -49,11 +49,11 @@
   </form>
 <script src="/layui_dist/layui.js"></script>
 <script>
-layui.use('form',function(){
+layui.use('form',function() {
   var form = layui.form;
   var $ = layui.$;
   var $$ = parent.layui.$;
-  form.on('submit(addForm)',function(data){
+  form.on('submit(addForm)',function(data) {
     var dataFromForm = data.field;
     console.log(dataFromForm);
     $.ajax({
@@ -62,16 +62,16 @@ layui.use('form',function(){
       data:dataFromForm,
       dataType:'json',
       success:function(res){
-        var thisIframe = parent.layer.getFrameIndex(window.name);
-        if(res.SUCCESS == 1) {
-          $$("#add_status").val("1");
+        var thisIframe = parent.layer.getFrameIndex(window.name); // get this framw's object
+        if (res.SUCCESS == 1) {
+          $$("#add_status").val("1"); // transfer res to father
           parent.layui.layer.close(thisIframe);
-        }else{
+        } else {
           $$("#add_status").val("0");
-          parent.layer.close(thisIframe);
+          parent.layer.close(thisIframe); // close this frame
         } 
       }
-    })
+    });
   });
 });
 </script>
