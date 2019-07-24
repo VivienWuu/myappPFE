@@ -21,4 +21,21 @@ router.get('/IframeChangeStaffValue',function(req,res,next){
 router.get('/IframeChangeStaffStatus',function(req,res,next){
   res.render('iframes/changestaffstatus',{title:"/IframeChangeStaffStatus"});
 });
+
+// 获取项目清单页面
+router.get('/project',function(req,res,next){
+  res.render('project',{ title: 'OBV2人力资源管理系统' })
+});
+// 项目清单页面：添加项目子页面
+router.get('/IframeAddProject',function(req,res,next){ 
+  res.render('iframes/addProject',{title:"/IframeAddProject"});
+});
+// 获取人力安排页面
+router.get('/arrangement',function(req,res,next){
+  res.render('arrangement',{ title: 'OBV2人力资源管理系统' })
+});
+// 获取计划总览页面
+router.get('/hrChart',function(req,res,next){
+  res.render('hrChart',{ title: 'OBV2人力资源管理系统' })
+});
 module.exports = router;

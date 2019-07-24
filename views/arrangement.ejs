@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/layui_dist/css/layui.css">
+  <link rel="stylesheet" href="/stylesheets/bodystyle.css">
+  <link rel="stylesheet" href="/handsontable_dist/handsontable.full.min.css">
+  
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <a href="/"><div class="layui-logo"><%= title %></div></a>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+          贤心
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="">基本资料</a></dd>
+          <dd><a href="">安全设置</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="">退了</a></li>
+    </ul>
+  </div>
+  
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">人力资源管理</a>
+          <dl class="layui-nav-child">
+            <dd><a href="/humanresource">人员列表</a></dd>
+            <dd><a href="/project">项目列表</a></dd>
+            <dd><a href="/arrangement">人力安排</a></dd>
+            <dd><a href="/hrChart">计划总览</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">工时统计</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;">子列表占位符一</a></dd>
+            <dd><a href="javascript:;">子列表占位符二</a></dd>
+          </dl>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="layui-body" style="height: auto">
+
+     
+ 
+      <div class="layui-form">
+          <table class="layui-table">
+            <colgroup>
+              <col width="150">
+              <col width="150">
+              <col width="200">
+              <col>
+            </colgroup>
+            <thead>
+              <tr>
+                <th><button type="button" class="layui-btn layui-btn-sm" name="load" id="load">加 载</button>
+                  <button type="button" class="layui-btn layui-btn-sm" name="save" id="save" >保 存</button>
+                </th>
+                
+              </tr> 
+            </thead>
+            <tbody >
+                <tr >
+                    <td>
+                        <div id="HRtable"></div>
+                    </td>
+                    
+                  </tr>
+             
+            </tbody>
+          </table>
+        </div>
+    <!--引用handsontable模块 -->   
+   
+
+    <script src="/handsontable_dist/handsontable.full.min.js"></script>
+    <script>
+       
+    var objectData  = [
+    {"idStaff":"056863","nameOfStaff":"高峰","majorOfStaff":"AV","power":"高级技术员","groupOfStaff":"领班","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"059338","nameOfStaff":"李光磊","majorOfStaff":"ME","power":"高级技术员","groupOfStaff":"领班","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"053653","nameOfStaff":"夏晨光","majorOfStaff":"AV","power":"检验员","groupOfStaff":"排故工程师","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"057944","nameOfStaff":"张宇航","majorOfStaff":"ME","power":"三级技术员","groupOfStaff":"ME/CB","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"068652","nameOfStaff":"苏郁","majorOfStaff":"ME","power":"三级技术员","groupOfStaff":"ME/CB","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"065179","nameOfStaff":"骆晓宇","majorOfStaff":"ME","power":"二级技术员","groupOfStaff":"ME/CB","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"073784","nameOfStaff":"徐继勇","majorOfStaff":"ME","power":"二级技术员","groupOfStaff":"ME/CB","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"110140","nameOfStaff":"王斌","majorOfStaff":"ME","power":"一级技术员","groupOfStaff":"ME/CB","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"109507","nameOfStaff":"王乃燚","majorOfStaff":"ME","power":"一级技术员","groupOfStaff":"ME/CB","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"023937","nameOfStaff":"程伟斌","majorOfStaff":"ME","power":"高级技术员","groupOfStaff":"ME/CB","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"042325","nameOfStaff":"乔继军","majorOfStaff":"CB","power":"二级技术员","groupOfStaff":"ME/CB","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"077463","nameOfStaff":"刘浩","majorOfStaff":"CB","power":"三级技术员","groupOfStaff":"ME/CB","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"078669","nameOfStaff":"徐帅","majorOfStaff":"CB","power":"二级技术员","groupOfStaff":"ME/CB","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"119390","nameOfStaff":"刘万鸿","majorOfStaff":"ME","power":"","groupOfStaff":"ME/CB","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"119572","nameOfStaff":"程帅","majorOfStaff":"ME","power":"","groupOfStaff":"ME/CB","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"120090","nameOfStaff":"赵海彬","majorOfStaff":"ME","power":"","groupOfStaff":"ME/CB","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"120470","nameOfStaff":"王酷阁","majorOfStaff":"ME","power":"","groupOfStaff":"ME/CB","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"059685","nameOfStaff":"虞斌","majorOfStaff":"AV","power":"三级技术员","groupOfStaff":"AV","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"072736","nameOfStaff":"丁伟","majorOfStaff":"AV","power":"三级技术员","groupOfStaff":"AV","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"073726","nameOfStaff":"吴金庆","majorOfStaff":"AV","power":"二级技术员","groupOfStaff":"AV","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"076556","nameOfStaff":"王峰","majorOfStaff":"AV","power":"二级技术员","groupOfStaff":"AV","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"073081","nameOfStaff":"冯鑫","majorOfStaff":"AV","power":"二级技术员","groupOfStaff":"AV","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"078859","nameOfStaff":"慈澍","majorOfStaff":"AV","power":"二级技术员","groupOfStaff":"AV","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"082628","nameOfStaff":"马越","majorOfStaff":"AV","power":"二级技术员","groupOfStaff":"AV","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"104507","nameOfStaff":"穆德成","majorOfStaff":"AV","power":"一级技术员","groupOfStaff":"AV","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"110538","nameOfStaff":"马铮楠","majorOfStaff":"AV","power":"一级技术员","groupOfStaff":"AV","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"103559","nameOfStaff":"王伟尧","majorOfStaff":"ME","power":"一级技术员","groupOfStaff":"AV","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"103731","nameOfStaff":"卢正泉","majorOfStaff":"ME","power":"一级技术员","groupOfStaff":"AV","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"056566","nameOfStaff":"赵朋","majorOfStaff":"STR","power":"二级技术员","groupOfStaff":"STR","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"089012","nameOfStaff":"曹建春","majorOfStaff":"STR","power":"二级技术员","groupOfStaff":"STR","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"084707","nameOfStaff":"王维","majorOfStaff":"STR","power":"二级技术员","groupOfStaff":"STR","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"100141","nameOfStaff":"尹鹏","majorOfStaff":"STR","power":"二级技术员","groupOfStaff":"STR","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"061953","nameOfStaff":"陈其峰","majorOfStaff":"","power":"室经理","groupOfStaff":"工卡与计划室","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"114936","nameOfStaff":"陈萌","majorOfStaff":"","power":"文件审核","groupOfStaff":"工卡与计划室","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"059601","nameOfStaff":"默鑫","majorOfStaff":"","power":"计划工程师","groupOfStaff":"工卡与计划室","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"054776","nameOfStaff":"王立君","majorOfStaff":"","power":"计划工程师","groupOfStaff":"工卡与计划室","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"099839","nameOfStaff":"贺尧","majorOfStaff":"","power":"助理工程师","groupOfStaff":"工卡与计划室","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"082884","nameOfStaff":"王畅","majorOfStaff":"","power":"助理工程师","groupOfStaff":"工卡与计划室","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"118136","nameOfStaff":"毛俊慧","majorOfStaff":"","power":"助理工程师","groupOfStaff":"工卡与计划室","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"118087","nameOfStaff":"袁崍","majorOfStaff":"","power":"助理工程师","groupOfStaff":"工卡与计划室","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"094673","nameOfStaff":"李扬","majorOfStaff":"","power":"助理工程师","groupOfStaff":"工卡与计划室","prj1":"","prj2":"","prj3":"","prj4":"","prj5":"","prj6":"","prj7":"","prj8":"","prj9":"","prj10":"","prj11":"","prj12":"","prj13":"","prj14":"","prj15":"","prj16":"","prj17":"","prj18":"","prj19":"","prj20":"","prj21":"","prj22":"","prj23":"","prj24":"","prj25":"","prj26":"","prj27":"","prj28":"","prj29":"","prj30":"","prj31":"",},
+    {"idStaff":"089880","nameOfStaff":"王吉星","majorOfStaff":"","power":"文件审核","groupOfStaff":"工卡与计划室",}
+    
+    ];
+
+          var container = document.getElementById('HRtable');
+          
+          var hot = new Handsontable(container, {            
+            data: objectData,
+            rowHeaders: true,
+            colHeaders: true,
+            filters: true,
+            // hiddenRows: { rows: [0],ndicators: true },
+            dropdownMenu:true,
+            dropdownMenu:['filter_by_value','filter_action_bar'],
+            columnSorting: true,
+            contextMenu: true,
+            colHeaders: ["职编","姓名","专业","能力","","职位","1日","2日","3日","4日","5日","6日","7日","8日","9日","10日","11日","12日","13日","14日","15日","16日","17日","18日","19日","20日","21日","22日","23日","24日","25日","26日","27日","28日","29日","30日","31日"],
+            width: '100%',           
+            height:735,
+            licenseKey: 'non-commercial-and-evaluation',
+            colWidths: 100,
+            // fixedRowsTop: 3,
+            
+        // manualColumnFreeze: true
+        // language: 'zh-CN',
+
+             contextMenu: {
+             items: {
+                'mergeCells':{ name: '合并单元格' , },
+                'row_above': { name: '上方添加一行', },
+                'row_below': { name: '下方添加一行', },
+                'col_left': { name: '左侧添加一列', },
+                'col_right': { name: '右侧添加一列', },
+                'remove_row': { name: '移除此行', },
+                'remove_col': { name: '移除此列', },
+                'copy': { name: '复制', },
+                'cut': { name: '剪切', },
+                'make_read_only': { name: '禁止编辑选中项', },
+                'alignment': { name: '对齐'},
+                'undo': { name: '还原上次操作', },
+                'redo': { name: '重复上次动作', },
+               
+                'setAlias':{
+                    name:'设置别名',
+                    callback:function(){
+                        if( $(Ccell) != undefined ){
+                            addAliasDialog();
+                        }else{
+                            alert("请先选择单元格...");
+                        }                        
+                    }
+                }
+            }
+        }  ,
+        
+         });
+
+    
+
+//  提交和加载数据 --------------------------------------------------------------------------
+var  $$ = function(id) {
+    return document.getElementById(id);
+  },
+  container = $$('HRtable'),
+  HRtableConsole = $$('HRtableconsole'),
+  autosave = $$('autosave'),
+  load = $$('load'),
+  save = $$('save'),
+  autosaveNotification,
+  hot;
+
+// 加载按钮绑定事件-------------------------------------------
+Handsontable.dom.addEvent(load, 'click', function() {
+  ajax('scripts/json/load.json', 'GET', '', function(res) {//加载数据接口
+    var data = JSON.parse(res.response);
+
+    hot.loadData(data.data);
+    HRtableConsole.innerText = 'Data loaded';
+  });
+});
+// 保存按钮绑定事件-------------------------------------------
+Handsontable.dom.addEvent(save, 'click', function() {
+  // save all cell's data
+  ajax('scripts/json/save.json', 'GET', JSON.stringify({data: hot.getData()}), function (res) {//保存数据接口
+    var response = JSON.parse(res.response);
+
+    if (response.result === 'ok') {
+      HRtableConsole.innerText = 'Data saved';
+    }
+    else {
+      HRtableConsole.innerText = 'Save error';
+    }
+  });
+});
+//自动保存按钮绑定事件-------------------------------------------
+Handsontable.dom.addEvent(autosave, 'click', function() {
+  if (autosave.checked) {
+    HRtableConsole.innerText = 'Changes will be autosaved';
+  }
+  else {
+    HRtableConsole.innerText ='Changes will not be autosaved';
+  }
+});
+
+
+</script>
+<!-- ---------------------------------------------------------------------------------------------------------------------------------->
+  </div>
+  
+  <div class="layui-footer">
+    <!-- 底部固定区域 -->
+    © layui.com - 底部固定区域
+  </div>
+</div>
+<script src="/layui_dist/layui.js"></script>
+<script>
+//JavaScript代码区域
+layui.use('table', function(){
+  var table = layui.table;
+  
+  //第一个实例
+  table.render({
+    elem: '#ProjectTable'
+    // ,height: 500  默认铺满
+    ,url: '/staff/getAllStaff' //数据接口
+    ,parseData: function(res){ //res 即为原始返回的数据
+    return {
+      "code": 0, //解析接口状态
+      "msg": " ", //解析提示文本
+      "count": res.length, //解析数据长度
+      "data": res //解析数据列表
+    };
+  }
+    ,page: false //开启分页
+    ,toolbar: '#toolbarProjectTable'
+    ,cols: [[ //表头
+      {checkbox: true, fixed: true}
+      ,{field: 'idStaff', title: '项目编号', sort: true, fixed: 'left'}
+      ,{field: 'idStaff', title: '项目名称', sort: true, fixed: 'left'}
+      ,{field: 'nameOfStaff', title: '项目开始日期', sort: true}
+      ,{field: 'majorOfStaff', title: '项目结束日期', sort: true}
+      ,{field: 'groupOfStaff', title: 'ME人数', sort: true}
+      ,{field: 'power', title: 'AV人数'} 
+      ,{field: 'statusOfStaff', title: 'STR人数'}
+       ,{field: 'groupOfStaff', title: 'CB人数', sort: true}
+       ,{field: 'statusOfStaff', title: '总人数'}
+      ,{fixed: 'right',title:'操作',toolbar:'#barProjectTable'}
+    ]]
+  });
+   //头工具栏事件
+   table.on('toolbar(ProjectTable)', function(obj){
+    var checkStatus = table.checkStatus(obj.config.id);
+    switch(obj.event){
+      case 'getCheckData':
+        var data = checkStatus.data;
+        layer.alert(JSON.stringify(data));
+      break;
+      case 'getCheckLength':
+        var data = checkStatus.data;
+        layer.msg('选中了：'+ data.length + ' 个');
+      break;
+      case 'addOneProject':
+        layer.open({
+          type:2
+          ,title: "添加一份项目"
+          ,area: ['670px', '380px']
+          ,content: "/Prjform"
+        });
+      break;
+    };
+  });
+  //监听行工具事件
+  table.on('tool(ProjectTable)', function(obj){
+    var data = obj.data;
+    if(obj.event === 'del'){
+      layer.confirm('真的删除行么', function(index){
+        obj.del();
+        layer.close(index);
+      });
+    } else if(obj.event === 'edit'){
+      console.log(data.idStaff);
+      layer.prompt({
+        formType: 2
+        ,value: data.email
+      }, function(value, index){
+        obj.update({
+          email: value
+        });
+        layer.close(index);
+      });
+    }
+  });
+});
+layui.use('element', function(){
+  var element = layui.element;
+  
+});
+</script>
+</body>
+</html>

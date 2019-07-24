@@ -34,9 +34,10 @@
         <li class="layui-nav-item layui-nav-itemed">
           <a class="" href="javascript:;">人力资源管理</a>
           <dl class="layui-nav-child">
-            <dd><a href="javascript:;">人员列表</a></dd>
-            <dd><a href="javascript:;">项目列表</a></dd>
-            <dd><a href="javascript:;">人力安排</a></dd>
+            <dd><a href="/humanresource">人员列表</a></dd>
+            <dd><a href="/project">项目列表</a></dd>
+            <dd><a href="/arrangement">人力安排</a></dd>
+            <dd><a href="/hrChart">计划总览</a></dd>
           </dl>
         </li>
         <li class="layui-nav-item">
@@ -57,6 +58,7 @@
       <div class="layui-btn-container">
         <button class="layui-btn layui-btn-sm" lay-event="addOneStaff">添加一名人员</button>
         <input id="add_status" value="" hidden="hidden">
+        <input id="change">
       </div>
     </script> 
     <script type="text/html" id="barStaffTable">
@@ -78,7 +80,7 @@ layui.use('table', function(){
   var table = layui.table;
   var $ = layui.$;
   //第一个实例
-  table.render({
+  table.render({even:'true',
     elem: '#staffTable'
     // ,height: 500  默认铺满
     ,url: '/staff/getAllStaff' //数据接口
@@ -92,15 +94,14 @@ layui.use('table', function(){
     }
     ,page: false //开启分页
     ,toolbar: '#toolbarStaffTable'
-    ,cols: [[ //表头
-      {checkbox: true, fixed: true}
-      ,{field: 'idStaff', title: '职编', sort: true, fixed: 'left',width:80}
-      ,{field: 'nameOfStaff', title: '姓名', sort: true,width:100}
+    ,cols: [[ //表头{checkbox: false, fixed: true},
+      {field: 'idStaff', title: '职编', sort: true}
+      ,{field: 'nameOfStaff', title: '姓名', sort: true}
       ,{field: 'majorOfStaff', title: '专业', sort: true}
       ,{field: 'groupOfStaff', title: '组别', sort: true}
       ,{field: 'postOfStaff', title: '岗位名称'} 
       ,{field: 'statusOfStaff', title: '状态'}
-      ,{fixed: 'right',title:'操作',toolbar:'#barStaffTable'}
+      ,{/*fixed: 'right',*/title:'操作',toolbar:'#barStaffTable',width:280}
     ]]
   });
    //头工具栏事件
@@ -116,7 +117,6 @@ layui.use('table', function(){
           ,success:function(layero,index){}
           ,end:function(){
             var add_status = $("#add_status").val();
-            console.log(add_status);
             if(add_status == "1"){
               layer.msg('添加成功！',{
                     time: 2000 
@@ -153,8 +153,7 @@ layui.use('table', function(){
           ,success:function(){}
           ,end:function(){
             layui.data('document', null);
-            var ifChangeValue = $("#ifChangeValue").val();
-            console.log(ifChangeValue);
+            var ifChangeValue = $("#ifCHangeValue").val();
             if(ifChangeValue == "1"){
               layer.msg('编辑成功！',{
                     time: 2000 
@@ -204,6 +203,7 @@ layui.use('table', function(){
         });
       break;
     };
+    
   });
 });
 layui.use('element', function(){

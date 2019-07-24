@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/layui_dist/css/layui.css">
+  <link rel="stylesheet" href="/stylesheets/bodystyle.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <a href="/"><div class="layui-logo"><%= title %></div></a>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+          贤心
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="">基本资料</a></dd>
+          <dd><a href="">安全设置</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="">退了</a></li>
+    </ul>
+  </div>
+  
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">人力资源管理</a>
+          <dl class="layui-nav-child">
+            <dd><a href="/humanresource">人员列表</a></dd>
+            <dd><a href="/project">项目列表</a></dd>
+            <dd><a href="/arrangement">人力安排</a></dd>
+            <dd><a href="/hrChart">计划总览</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">工时统计</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;">子列表占位符一</a></dd>
+            <dd><a href="javascript:;">子列表占位符二</a></dd>
+          </dl>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <table id="ProjectTable" lay-filter="ProjectTable"></table>
+    <script type="text/html" id="toolbarProjectTable">
+      <div class="layui-btn-container">
+       <button class="layui-btn layui-btn-sm" lay-event="addOneProject">新增项目</button>
+       <button class="layui-btn layui-btn-sm" lay-event="edit">编辑项目</button>
+       <button class="layui-btn layui-btn-sm" lay-event="del">删除项目</button>
+      </div>
+    </script> 
+    <script type="text/html" id="barProjectTable">
+      <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
+  </div>
+  
+  <div class="layui-footer">
+    <!-- 底部固定区域 -->
+    © layui.com - 底部固定区域
+  </div>
+</div>
+<script src="/layui_dist/layui.js"></script>
+<script>
+//JavaScript代码区域
+layui.use('table', function(){
+  var table = layui.table;
+  
+  //第一个实例
+  table.render({
+    elem: '#ProjectTable'
+    // ,height: 500  默认铺满
+    ,url: '/porject/getAllProject' //数据接口
+    ,parseData: function(res){ //res 即为原始返回的数据
+    return {
+      "code": 0, //解析接口状态
+      "msg": " ", //解析提示文本
+      "count": res.length, //解析数据长度
+      "data": res //解析数据列表
+    };
+  }
+    ,page: true //开启分页
+    ,toolbar: '#toolbarProjectTable'
+    ,cols: [[ //表头
+    
+      {checkbox:false, fixed: false}
+      ,{field: 'idproject', title: '项目编号', sort: true, fixed: 'left'}
+      ,{field: 'nameofproject', title: '项目名称', sort: true, fixed: 'left'}
+      ,{field: 'period', title: '项目起止日期', sort: true}
+      ,{field: 'MEWH', title: 'ME工时', sort: true}
+      ,{field: 'AVWH', title: 'AV工时'} 
+      ,{field: 'CBRWH', title: 'STR工时'}
+       ,{field: 'STEWH', title: 'CB工时', sort: true}
+       ,{field: 'MEWH', title: '总工时'}
+      ,{fixed: 'right',title:'操作',toolbar:'#barProjectTable'}
+    ]]
+  });
+
+  //头工具栏事件
+  table.on('toolbar(ProjectTable)', function(obj){
+
+   var layEvent = obj.event; //获得 lay-event 对应的值
+    if(layEvent === 'addOneProject'){ //查看
+      layer.open({
+          type:2
+          ,title: "添加一份项目"
+          ,area: ['670px', '380px']
+          ,content: "/IframeAddProject" })
+  } else if(layEvent === 'del'){ //删除
+    layer.confirm('真的删除行么', function(index){
+      $.ajax({
+            type: "get",
+            url: "/"//c此处url请求，需要从路由中找。。。。。。。。。。。。。。。。。。。。。。
+            ,data: {idproject:obj.data.idproject},
+            dataType: "json",
+            success: function (res) {
+              if (res.SUCCESS == 1) {
+                obj.del();
+                layer.msg("删除成功",{
+                  time:2000
+                });
+                layer.close(index);
+              }
+            }
+          });
+      obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+      layer.close(index);
+      //向服务端发送删除指令
+    });
+  } else if(layEvent === 'edit'){ //编辑。。。。。。。。。。。。。。此处需改一改
+    layer.open({
+          title: "编辑项目"
+          ,type:2
+          ,area: ['780px','570px']
+          ,content:"/IframeChangeProjectValue"
+          ,success:function(){}
+          ,end:function(){
+            layui.data('document', null);
+            var ifChangeValue = $("#ifCHangeValue").val();
+            if(ifChangeValue == "1"){
+              layer.msg('编辑成功！',{
+                    time: 2000 
+                },function(){
+                    history.go(0);
+                });
+            }else if (ifChangeValue == "0"){
+              layer.msg('编辑失败！',{
+                    time: 2000
+                },function(){
+                    history.go(0);
+                });
+            }
+          }
+        });
+  }
+
+    
+  });
+   
+  
+});
+layui.use('element', function(){
+  var element = layui.element;
+  
+});
+</script>
+</body>
+</html>
