@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/layui_dist/css/layui.css">
+  <link rel="stylesheet" href="/stylesheets/bodystyle.css">
+  </head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <a href="/"><div class="layui-logo"><%= title %></div></a>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+          贤心
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="">基本资料</a></dd>
+          <dd><a href="">安全设置</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="">退了</a></li>
+    </ul>
+  </div>
+  
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">人力资源管理</a>
+          <dl class="layui-nav-child">
+            <dd><a href="/humanresource">人员列表</a></dd>
+            <dd><a href="/project">项目列表</a></dd>
+            <dd><a href="/arrangement">人力安排</a></dd>
+            <dd><a href="/hrChart">计划总览</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">工时统计</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;">子列表占位符一</a></dd>
+            <dd><a href="javascript:;">子列表占位符二</a></dd>
+          </dl>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <!-- <table id="ProjectTable" lay-filter="ProjectTable"></table>
+    <script type="text/html" id="toolbarProjectTable">
+      <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+        <button class="layui-btn layui-btn-sm" lay-event="addOneProject">新增项目</button>
+      </div>
+    </script> 
+    <script type="text/html" id="barProjectTable">
+      <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script> -->
+
+   
+  </fieldset>
+
+   <!--引用handsontable模块 -->
+  <div class="layui-btn-container">
+       
+      <button type="button" class="layui-btn layui-btn-radius layui-btn-sm" name="load" id="load">加载</button>
+      <button type="button" class="layui-btn layui-btn-radius layui-btn-sm" name="save" id="save" >保存</button>
+      
+  </div>
+     <div id="HRtable"></div>
+
+    <script src="/handsontable_dist/handsontable.full.min.js"></script>
+    <script>
+         var data = [
+                    ["职编","姓名","专业","能力","","职位","1日","2日","3日","4日","5日","6日","7日","8日","9日","10日","11日","12日","13日","14日","15日","16日","17日","18日","19日","20日","21日","22日","23日","24日","25日","26日","27日","28日","29日","30日","31日"],
+                    ["056863","高峰","AV","高级技术员","","领班","WIFI","WIFI"],
+                    ["059338","李光磊","ME","高级技术员","","领班",],
+                    ["053653","夏晨光","AV","检验员","","排故工程师",],
+                    ["057944","张宇航","ME","三级技术员","","ME/CB",],
+                    ["068652","苏郁","ME","三级技术员","","ME/CB",],
+                    ["065179","骆晓宇","ME","二级技术员","","ME/CB",],
+                    ["073784","徐继勇","ME","二级技术员","","ME/CB",],
+                    ["110140","王斌","ME","一级技术员","","ME/CB",],
+                    ["109507","王乃燚","ME","一级技术员","","ME/CB",],
+                    ["023937","程伟斌","ME","高级技术员","","ME/CB",],
+                    ["042325","乔继军","CB","二级技术员","","ME/CB",],
+                    ["077463","刘浩","CB","三级技术员","","ME/CB",],
+                    ["078669","徐帅","CB","二级技术员","","ME/CB",],
+                    ["119390","刘万鸿","ME","","","ME/CB",],
+                    ["119572","程帅","ME","","","ME/CB",],
+                    ["120090","赵海彬","ME","","","ME/CB",],
+                    ["120470","王酷阁","ME","","","ME/CB",],
+                    ["059685","虞斌","AV","三级技术员","","AV",],
+                    ["072736","丁伟","AV","三级技术员","","AV",],
+                    ["073726","吴金庆","AV","二级技术员","","AV",],
+                    ["076556","王峰","AV","二级技术员","","AV",],
+                    ["073081","冯鑫","AV","二级技术员","","AV",],
+                    ["078859","慈澍","AV","二级技术员","","AV",],
+                    ["082628","马越","AV","二级技术员","","AV",],
+                    ["104507","穆德成","AV","一级技术员","","AV",],
+                    ["110538","马铮楠","AV","一级技术员","","AV",],
+                    ["103559","王伟尧","ME","一级技术员","","AV",],
+                    ["103731","卢正泉","ME","一级技术员","","AV",],
+                    ["056566","赵朋","STR","二级技术员","","STR",],
+                    ["089012","曹建春","STR","二级技术员","","STR",],
+                    ["084707","王维","STR","二级技术员","","STR",],
+                    ["100141","尹鹏","STR","二级技术员","","STR",],
+                    ["061953","陈其峰","","室经理","","工卡与计划室",],
+                    ["114936","陈萌","","文件审核","","工卡与计划室",],
+                    ["059601","默鑫","","计划工程师","","工卡与计划室",],
+                    ["054776","王立君","","计划工程师","","工卡与计划室",],
+                    ["099839","贺尧","","助理工程师","","工卡与计划室",],
+                    ["082884","王畅","","助理工程师","","工卡与计划室",],
+                    ["118136","毛俊慧","","助理工程师","","工卡与计划室",],
+                    ["118087","袁崍","","助理工程师","","工卡与计划室",],
+                    ["094673","李扬","","助理工程师","","工卡与计划室",],
+                    ["089880","王吉星","","文件审核","","工卡与计划室",]
+          ];
+
+          var container = document.getElementById('HRtable');
+          
+          var hot = new Handsontable(container, {            
+            data: data,
+            rowHeaders: true,
+            colHeaders: true,
+            filters: true,
+            hiddenRows: { rows: [0],ndicators: true },
+            dropdownMenu:true,
+            dropdownMenu:['filter_by_value','filter_action_bar'],
+            columnSorting: true,
+            contextMenu: true,
+            colHeaders: ["职编","姓名","专业","能力","","职位","1日","2日","3日","4日","5日","6日","7日","8日","9日","10日","11日","12日","13日","14日","15日","16日","17日","18日","19日","20日","21日","22日","23日","24日","25日","26日","27日","28日","29日","30日","31日"],
+            width: '100%',           
+            height: 630,
+            licenseKey: 'non-commercial-and-evaluation',
+            colWidths: 100,
+            // fixedRowsTop: 3,
+            
+        // manualColumnFreeze: true
+        // language: 'zh-CN',
+
+             contextMenu: {
+             items: {
+                'mergeCells':{ name: '合并单元格' , },
+                'row_above': { name: '上方添加一行', },
+                'row_below': { name: '下方添加一行', },
+                'col_left': { name: '左侧添加一列', },
+                'col_right': { name: '右侧添加一列', },
+                'remove_row': { name: '移除此行', },
+                'remove_col': { name: '移除此列', },
+                'copy': { name: '复制', },
+                'cut': { name: '剪切', },
+                'make_read_only': { name: '禁止编辑选中项', },
+                'alignment': { name: '对齐'},
+                'undo': { name: '还原上次操作', },
+                'redo': { name: '重复上次动作', },
+               
+                'setAlias':{
+                    name:'设置别名',
+                    callback:function(){
+                        if( $(Ccell) != undefined ){
+                            addAliasDialog();
+                        }else{
+                            alert("请先选择单元格...");
+                        }                        
+                    }
+                }
+            }
+        }  ,
+        
+         });
+
+    
+
+//  提交和加载数据 --------------------------------------------------------------------------
+var  $$ = function(id) {
+    return document.getElementById(id);
+  },
+  container = $$('HRtable'),
+  HRtableConsole = $$('HRtableconsole'),
+  autosave = $$('autosave'),
+  load = $$('load'),
+  save = $$('save'),
+  autosaveNotification,
+  hot;
+
+// 加载按钮绑定事件-------------------------------------------
+Handsontable.dom.addEvent(load, 'click', function() {
+  ajax('scripts/json/load.json', 'GET', '', function(res) {//加载数据接口
+    var data = JSON.parse(res.response);
+
+    hot.loadData(data.data);
+    HRtableConsole.innerText = 'Data loaded';
+  });
+});
+// 保存按钮绑定事件-------------------------------------------
+Handsontable.dom.addEvent(save, 'click', function() {
+  // save all cell's data
+  ajax('scripts/json/save.json', 'GET', JSON.stringify({data: hot.getData()}), function (res) {//保存数据接口
+    var response = JSON.parse(res.response);
+
+    if (response.result === 'ok') {
+      HRtableConsole.innerText = 'Data saved';
+    }
+    else {
+      HRtableConsole.innerText = 'Save error';
+    }
+  });
+});
+//自动保存按钮绑定事件-------------------------------------------
+Handsontable.dom.addEvent(autosave, 'click', function() {
+  if (autosave.checked) {
+    HRtableConsole.innerText = 'Changes will be autosaved';
+  }
+  else {
+    HRtableConsole.innerText ='Changes will not be autosaved';
+  }
+});
+
+
+</script>
+<!-- ---------------------------------------------------------------------------------------------------------------------------------->
+  </div>
+  
+  <div class="layui-footer">
+    <!-- 底部固定区域 -->
+    © layui.com - 底部固定区域
+  </div>
+</div>
+<script src="/layui_dist/layui.js"></script>
+<script>
+//JavaScript代码区域
+layui.use('table', function(){
+  var table = layui.table;
+  
+  //第一个实例
+  table.render({
+    elem: '#ProjectTable'
+    // ,height: 500  默认铺满
+    ,url: '/staff/getAllStaff' //数据接口
+    ,parseData: function(res){ //res 即为原始返回的数据
+    return {
+      "code": 0, //解析接口状态
+      "msg": " ", //解析提示文本
+      "count": res.length, //解析数据长度
+      "data": res //解析数据列表
+    };
+  }
+    ,page: false //开启分页
+    ,toolbar: '#toolbarProjectTable'
+    ,cols: [[ //表头
+      {checkbox: true, fixed: true}
+      ,{field: 'idStaff', title: '项目编号', sort: true, fixed: 'left'}
+      ,{field: 'idStaff', title: '项目名称', sort: true, fixed: 'left'}
+      ,{field: 'nameOfStaff', title: '项目开始日期', sort: true}
+      ,{field: 'majorOfStaff', title: '项目结束日期', sort: true}
+      ,{field: 'groupOfStaff', title: 'ME人数', sort: true}
+      ,{field: 'postOfStaff', title: 'AV人数'} 
+      ,{field: 'statusOfStaff', title: 'STR人数'}
+       ,{field: 'groupOfStaff', title: 'CB人数', sort: true}
+       ,{field: 'statusOfStaff', title: '总人数'}
+      ,{fixed: 'right',title:'操作',toolbar:'#barProjectTable'}
+    ]]
+  });
+   //头工具栏事件
+   table.on('toolbar(ProjectTable)', function(obj){
+    var checkStatus = table.checkStatus(obj.config.id);
+    switch(obj.event){
+      case 'getCheckData':
+        var data = checkStatus.data;
+        layer.alert(JSON.stringify(data));
+      break;
+      case 'getCheckLength':
+        var data = checkStatus.data;
+        layer.msg('选中了：'+ data.length + ' 个');
+      break;
+      case 'addOneProject':
+        layer.open({
+          type:2
+          ,title: "添加一份项目"
+          ,area: ['670px', '380px']
+          ,content: "/Prjform"
+        });
+      break;
+    };
+  });
+  //监听行工具事件
+  table.on('tool(ProjectTable)', function(obj){
+    var data = obj.data;
+    if(obj.event === 'del'){
+      layer.confirm('真的删除行么', function(index){
+        obj.del();
+        layer.close(index);
+      });
+    } else if(obj.event === 'edit'){
+      console.log(data.idStaff);
+      layer.prompt({
+        formType: 2
+        ,value: data.email
+      }, function(value, index){
+        obj.update({
+          email: value
+        });
+        layer.close(index);
+      });
+    }
+  });
+});
+layui.use('element', function(){
+  var element = layui.element;
+  
+});
+</script>
+</body>
+</html>

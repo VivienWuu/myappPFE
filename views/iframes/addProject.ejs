@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>添加成员表单</title>
+    <link rel="stylesheet" href="/layui_dist/css/layui.css">
+        
+</head>
+<body>
+  <form class="layui-form" action="">
+
+  <div class="layui-form-item" >
+      <br/>
+    <div class="layui-inline">
+      <label class="layui-form-label">项目编号</label>
+      <div class="layui-input-inline">
+        <input type="text" name="PrjID"  placeholder="请输入, 没有可留空" autocomplete="off" class="layui-input" style="width: 200px">
+      </div>
+    </div>
+
+    <div class="layui-inline">
+       
+         
+      <label class="layui-form-label">项目名称</label>
+      <div class="layui-input-inline">
+        <input type="text" name="PrjName" placeholder="请输入, 必须要填" lay-verify="required|text" lay-reqtext="项目名称是必填项，岂能为空？" autocomplete="off" class="layui-input" style="width: 200px">
+      </div>
+    </div>
+  </div>
+
+  <label class="layui-form-label">各专业工时</label>
+    
+  <div class="layui-form-item" >
+      <div class="layui-inline">
+        <label class="layui-form-label">ME工时</label>
+        <div class="layui-input-inline"  style="width: 38px">
+          <input type="number" name="ME"  placeholder=0 autocomplete="off" class="layui-input" style="width: 50px">
+        </div>
+      
+          <label class="layui-form-label">AV工时</label>
+          <div class="layui-input-inline"  style="width: 38px">
+            <input type="number" name="AV" placeholder=0  autocomplete="off" class="layui-input" style="width: 50px">
+          </div>
+        
+         <label class="layui-form-label">CB工时</label>
+            <div class="layui-input-inline"  style="width: 38px">
+              <input type="number" name="CB" placeholder=0  autocomplete="off" class="layui-input" style="width: 50px">
+            </div>
+                    
+            <label class="layui-form-label">STR工时</label>
+              <div class="layui-input-inline"  style="width: 38px"> 
+                <input type="number" name="STR" placeholder=0 autocomplete="off" class="layui-input" style="width: 50px">
+              </div>
+            </div>
+    </div>
+  
+    <div class="layui-form-item">
+        
+        <!-- <div class="layui-inline">
+          <label class="layui-form-label">开始日期</label>
+          <div class="layui-input-inline">
+            <input type="text" name="startdate" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">结束日期</label>
+            <div class="layui-input-inline">
+              <input type="text" name="enddate" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+            </div>
+          </div> -->
+
+          <div class="layui-inline">
+            <label class="layui-form-label" style="width: 150px" >开始日期和结束日期</label>
+            <div class="layui-input-inline">
+              <input type="text"  class="layui-input" id="date1"  name="period" placeholder=" 请选择 ">
+            </div>
+          </div>
+
+
+      </div>
+
+
+    </div>
+    <div class="layui-form-item">
+      <div class="layui-input-block">
+        <button class="layui-btn" lay-submit="submit" lay-filter="addform">提交</button>
+        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      </div>
+    </div>
+  </form>
+<script src="/layui_dist/layui.js"></script>
+<script>
+layui.use('form',function(){
+  var form = layui.form;
+  var $ = layui.$;
+  form.on('submit(addform)',function(data){
+    var dataFromForm = data.field;
+    console.log(dataFromForm);
+    $.ajax({
+      url:'/staff/addOneProject',
+      type:'get',
+      data:dataFromForm,
+      dataType:'json',
+      success:function(data){
+        console.log(data.SUCCESS);
+        if(data.SUCCESS == 1) {
+          alert(1);
+        }else{
+          alert(0);
+        } 
+      }
+    })
+  });
+});
+
+    layui.use(['form', 'layedit', 'laydate'], function(){
+      var form = layui.form
+      ,layer = layui.layer
+      ,layedit = layui.layedit
+      ,laydate = layui.laydate;
+      
+      //日期
+      laydate.render({
+        elem: '#date'
+      });
+      
+      laydate.render({
+         elem: '#date1'
+        ,type: 'date'
+        ,range: true
+  });
+      
+      //创建一个编辑器
+      var editIndex = layedit.build('LAY_demo_editor');
+     
+      //自定义验证规则
+      form.verify({
+        title: function(value){
+          if(value.length < 5){
+            return '标题至少得5个字符啊';
+          }
+        }
+        ,pass: [
+          /^[\S]{6,12}$/
+          ,'密码必须6到12位，且不能出现空格'
+        ]
+        ,content: function(value){
+          layedit.sync(editIndex);
+        }
+      });
+      
+      //监听指定开关
+      form.on('switch(switchTest)', function(data){
+        layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
+          offset: '6px'
+        });
+        layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+      });
+      
+      //监听提交
+      form.on('submit', function(data){
+        layer.alert(JSON.stringify(data.field), {
+          title: '最终的提交信息'
+        })
+        return false;
+      });
+     
+      //表单初始赋值
+      form.val('example', {
+        "username": "" // "name": "value"
+        ,"password": "123456"
+        ,"interest": 1
+        ,"like[write]": true //复选框选中状态
+        ,"close": true //开关状态
+        ,"sex": ""
+        ,"desc": ""
+      })
+      
+      
+    });
+    </script>
+
+</body>
+</html>
