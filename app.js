@@ -7,7 +7,8 @@ var bodyparser = require('body-parser'); // 用于处理HTML请求
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var staffRouter = require('./routes/staff');
-var stasticsRouter = require('./routes/stastics')
+var stasticsRouter = require('./routes/stastics');
+var projectRouter = require('./routes/project');
 var app = express();
 
 // view engine setup
@@ -26,6 +27,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/staff', staffRouter);
 app.use('/stastics',stasticsRouter);
+app.use('/project', projectRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

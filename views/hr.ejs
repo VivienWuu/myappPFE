@@ -114,7 +114,7 @@ layui.use('table', function(){
           ,title: "添加一名成员"
           ,area: ['600px', '400px']
           ,content: "/IframeAddStaff"
-          ,success:function(layero,index){}
+          ,success:function(){}
           ,end:function(){
             var add_status = $("#add_status").val();
             if(add_status == "1"){
@@ -169,7 +169,7 @@ layui.use('table', function(){
             }
           }
         });
-        break;
+      break;
       case "editStatus":
         layer.open({
           title:"编辑人员状态"
@@ -182,7 +182,7 @@ layui.use('table', function(){
             layui.data('document', null);
           }
         });
-        break;
+      break;
       case "delStaff":
         layer.confirm("确认删除该人员？",function(index){
           $.ajax({

@@ -9,8 +9,8 @@ var date = new Date();
 var today = date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
 
 // FUNC : get all staff information of today
-// REQ : NONE
-// RES : JSON of all staff info in today 
+// REQ : N/A
+// RES : LIST json object of all staff info in today 
 router.get("/getAllStaff",function (req,res,next) {
   db.staffmodel.find(function(err,documents) {
     if (err) return console.error(err);

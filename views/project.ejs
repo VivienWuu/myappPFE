@@ -53,17 +53,16 @@
   
   <div class="layui-body">
     <!-- 内容主体区域 -->
-    <table id="ProjectTable" lay-filter="ProjectTable"></table>
+    <table id="projectTable" lay-filter="projectTable"></table>
     <script type="text/html" id="toolbarProjectTable">
       <div class="layui-btn-container">
        <button class="layui-btn layui-btn-sm" lay-event="addOneProject">新增项目</button>
-       <button class="layui-btn layui-btn-sm" lay-event="edit">编辑项目</button>
-       <button class="layui-btn layui-btn-sm" lay-event="del">删除项目</button>
+       <input id="add_status" value="" hidden="hidden">
       </div>
     </script> 
     <script type="text/html" id="barProjectTable">
-      <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+      <a class="layui-btn layui-btn-xs" lay-event="editProject">编辑项目</a>
+      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除项目</a>
     </script>
   </div>
   
@@ -77,99 +76,89 @@
 //JavaScript代码区域
 layui.use('table', function(){
   var table = layui.table;
-  
-  //第一个实例
+  var $ = layui.$;
   table.render({
-    elem: '#ProjectTable'
+    elem: '#projectTable'
     // ,height: 500  默认铺满
-    ,url: '/porject/getAllProject' //数据接口
+    ,url: '/project/getAllProject' //数据接口
     ,parseData: function(res){ //res 即为原始返回的数据
-    return {
-      "code": 0, //解析接口状态
-      "msg": " ", //解析提示文本
-      "count": res.length, //解析数据长度
-      "data": res //解析数据列表
-    };
-  }
-    ,page: true //开启分页
+      for (var i=0;i<res.length;i++) {
+        var startdate = res[i].startdateOfProject.toString();
+        var enddate = res[i].enddateOfProject.toString();
+        res[i].startdateOfProject = startdate.slice(0,4)+"-"+startdate.slice(4,6)+"-"+startdate.slice(6,8);
+        res[i].enddateOfProject = enddate.slice(0,4)+"-"+enddate.slice(4,6)+"-"+enddate.slice(6,8); 
+        res[i]['hourAV'] = res[i].hourOfProject[0];
+        res[i]['hourCB'] = res[i].hourOfProject[1];
+        res[i]['hourME'] = res[i].hourOfProject[2];
+        res[i]['hourSTR'] = res[i].hourOfProject[3];
+        res[i].hourOfProject = null;
+        res[i]['totalHour'] = res[i]['hourAV'] + res[i]['hourCB'] + res[i]['hourME'] + res[i]['hourSTR'];
+      }
+      return {
+        "code": 0, //解析接口状态
+        "msg": " ", //解析提示文本
+        "count": res.length, //解析数据长度
+        "data": res //解析数据列表
+      };
+    }
+    ,page: false 
     ,toolbar: '#toolbarProjectTable'
     ,cols: [[ //表头
-    
-      {checkbox:false, fixed: false}
-      ,{field: 'idproject', title: '项目编号', sort: true, fixed: 'left'}
-      ,{field: 'nameofproject', title: '项目名称', sort: true, fixed: 'left'}
-      ,{field: 'period', title: '项目起止日期', sort: true}
-      ,{field: 'MEWH', title: 'ME工时', sort: true}
-      ,{field: 'AVWH', title: 'AV工时'} 
-      ,{field: 'CBRWH', title: 'STR工时'}
-       ,{field: 'STEWH', title: 'CB工时', sort: true}
-       ,{field: 'MEWH', title: '总工时'}
+      {checkbox:true, fixed: true}
+      ,{field: '_id', title: '项目编号', sort: true, fixed: 'left'}
+      ,{field: 'nameOfProject', title: '项目名称', sort: true, fixed: 'left'}
+      ,{field: 'startdateOfProject', title: '项目开始日期'}
+      ,{field: 'enddateOfProject', title: '项目结束日期'}
+      ,{field: 'hourAV', title: 'AV所需工时', sort: true}
+      ,{field: 'hourCB', title: 'CB所需工时'} 
+      ,{field: 'hourME', title: 'ME所需工时'}
+       ,{field: 'hourSTR', title: 'STR所需工时', sort: true}
+       ,{field: 'totalHour', title: '总工时'}
       ,{fixed: 'right',title:'操作',toolbar:'#barProjectTable'}
     ]]
   });
 
   //头工具栏事件
-  table.on('toolbar(ProjectTable)', function(obj){
-
-   var layEvent = obj.event; //获得 lay-event 对应的值
+  table.on('toolbar(projectTable)', function(obj){
+    var layEvent = obj.event; //获得 lay-event 对应的值
     if(layEvent === 'addOneProject'){ //查看
       layer.open({
+        type:2
+        ,title: "添加一份项目"
+        ,area: ['740px', '560px']
+        ,content: "/IframeAddProject" })
+    }
+  });
+  table.on('tool(projectTable)', function(obj){
+    switch(obj.event){
+      case "editProject":
+        layer.open({
           type:2
           ,title: "添加一份项目"
           ,area: ['670px', '380px']
-          ,content: "/IframeAddProject" })
-  } else if(layEvent === 'del'){ //删除
-    layer.confirm('真的删除行么', function(index){
-      $.ajax({
-            type: "get",
-            url: "/"//c此处url请求，需要从路由中找。。。。。。。。。。。。。。。。。。。。。。
-            ,data: {idproject:obj.data.idproject},
-            dataType: "json",
-            success: function (res) {
-              if (res.SUCCESS == 1) {
-                obj.del();
-                layer.msg("删除成功",{
-                  time:2000
-                });
-                layer.close(index);
-              }
-            }
-          });
-      obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-      layer.close(index);
-      //向服务端发送删除指令
-    });
-  } else if(layEvent === 'edit'){ //编辑。。。。。。。。。。。。。。此处需改一改
-    layer.open({
-          title: "编辑项目"
-          ,type:2
-          ,area: ['780px','570px']
-          ,content:"/IframeChangeProjectValue"
-          ,success:function(){}
-          ,end:function(){
-            layui.data('document', null);
-            var ifChangeValue = $("#ifCHangeValue").val();
-            if(ifChangeValue == "1"){
-              layer.msg('编辑成功！',{
+          ,content: "/IframeAddProject"
+          ,success: function(){}
+          ,end: function(){
+            var add_status = $("#add_status").val();
+            console.log(add_status);
+            if(add_status == "1"){
+              layer.msg('添加成功！',{
                     time: 2000 
                 },function(){
                     history.go(0);
                 });
-            }else if (ifChangeValue == "0"){
-              layer.msg('编辑失败！',{
+            }else if (add_status == "0"){
+              layer.msg('添加失败！',{
                     time: 2000
                 },function(){
                     history.go(0);
                 });
             }
           }
-        });
-  }
-
-    
+        })
+      break;
+    }
   });
-   
-  
 });
 layui.use('element', function(){
   var element = layui.element;
