@@ -57,12 +57,12 @@ layui.use(['laydate','form','jquery'],function(){
   var $ = layui.$;
   
   // get staff info from father webpage
-  var openedDocument = layui.data('openedDocument');
-  $("#idCurrent")[0].innerHTML = openedDocument.idStaff;
-  $("#nameCurrent")[0].innerHTML = openedDocument.nameOfStaff;
-  $("#postCurrent")[0].innerHTML = openedDocument.postOfStaff;
-  $("#majorCurrent")[0].innerHTML = openedDocument.majorOfStaff;
-  $("#groupCurrent")[0].innerHTML = openedDocument.groupOfStaff;
+  var openedStaff = layui.data('openedStaff');
+  $("#idCurrent")[0].innerHTML = openedStaff.idStaff;
+  $("#nameCurrent")[0].innerHTML = openedStaff.nameOfStaff;
+  $("#postCurrent")[0].innerHTML = openedStaff.postOfStaff;
+  $("#majorCurrent")[0].innerHTML = openedStaff.majorOfStaff;
+  $("#groupCurrent")[0].innerHTML = openedStaff.groupOfStaff;
   
   // get staff status from database and display in laydate
   var staffStatus = {};
@@ -72,7 +72,7 @@ layui.use(['laydate','form','jquery'],function(){
     type: "get",
     async: false,
     url: "/staff/searchStaffStatus",
-    data: {idStaff:openedDocument.idStaff},
+    data: {idStaff:openedStaff.idStaff},
     dataType: "json",
     success: function (res) {
       for(i=0;i<res.length;i++){
@@ -95,7 +95,7 @@ layui.use(['laydate','form','jquery'],function(){
     }
   });
   form.on("submit(changeForm)",function(data){
-    var dataFromForm = {idStaff:openedDocument.idStaff,date:targetDate,reason:data.field.statusOfStaff};
+    var dataFromForm = {idStaff:openedStaff.idStaff,date:targetDate,reason:data.field.statusOfStaff};
     $.ajax({
       type: "get",
       url: "/staff/changeStaffStatus",

@@ -57,12 +57,12 @@
     <script type="text/html" id="toolbarProjectTable">
       <div class="layui-btn-container">
        <button class="layui-btn layui-btn-sm" lay-event="addOneProject">新增项目</button>
-       <input id="add_status" value="" hidden="hidden">
+       <input type="text" value="" id="add_status" hidden="hidden">
       </div>
     </script> 
     <script type="text/html" id="barProjectTable">
       <a class="layui-btn layui-btn-xs" lay-event="editProject">编辑项目</a>
-      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除项目</a>
+      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delProject">删除项目</a>
     </script>
   </div>
   
@@ -121,42 +121,88 @@ layui.use('table', function(){
   //头工具栏事件
   table.on('toolbar(projectTable)', function(obj){
     var layEvent = obj.event; //获得 lay-event 对应的值
-    if(layEvent === 'addOneProject'){ //查看
-      layer.open({
-        type:2
-        ,title: "添加一份项目"
-        ,area: ['740px', '560px']
-        ,content: "/IframeAddProject" })
-    }
-  });
-  table.on('tool(projectTable)', function(obj){
-    switch(obj.event){
-      case "editProject":
+    switch (layEvent) {
+      case 'addOneProject':
         layer.open({
           type:2
           ,title: "添加一份项目"
-          ,area: ['670px', '380px']
-          ,content: "/IframeAddProject"
+          ,area: ['740px', '560px']
+          ,content: "/IframeAddProject" 
           ,success: function(){}
           ,end: function(){
             var add_status = $("#add_status").val();
             console.log(add_status);
             if(add_status == "1"){
               layer.msg('添加成功！',{
-                    time: 2000 
-                },function(){
-                    history.go(0);
-                });
-            }else if (add_status == "0"){
+                time: 2000 
+              },function(){
+                history.go(0);
+              });
+            } else if (add_status == "0"){
               layer.msg('添加失败！',{
-                    time: 2000
-                },function(){
-                    history.go(0);
+                time: 2000
+              },function(){
+                history.go(0);
+              });       
+            }
+          }      
+        });
+      break;
+    }
+  });
+  table.on('tool(projectTable)', function(obj){
+    layui.data('openedProject',{key:"_id",value:obj.data._id});
+    layui.data('openedProject',{key:"nameOfProject",value:obj.data.nameOfProject});
+    layui.data('openedProject',{key:"hourAV",value:obj.data.hourAV});
+    layui.data('openedProject',{key:"hourCB",value:obj.data.hourCB});
+    layui.data('openedProject',{key:"hourME",value:obj.data.hourME});
+    layui.data('openedProject',{key:"hourSTR",value:obj.data.hourSTR});
+    layui.data('openedProject',{key:"startdateOfProject",value:obj.data.startdateOfProject});
+    layui.data('openedProject',{key:"enddateOfProject",value:obj.data.enddateOfProject});
+    switch(obj.event){
+      case "editProject":
+        layer.open({
+          type:2
+          ,title: "编辑一份项目"
+          ,area: ['740px', '560px']
+          ,content: "/IframeChangeProject"
+          ,end: function(){
+            layui.data('openedProject',null);
+            var resFromIframe = layui.data('res');
+            layui.data('res',null);
+            if (resFromIframe == 1){
+              layer.msg('编辑成功',{
+                time:2000
+              },function(){
+                history.go(0);
                 });
+            } else {
+              layer.msg('编辑失败',{
+                time:2000
+              });
             }
           }
-        })
+        });
       break;
+      case "delProject":
+        layer.confirm("确认删除该项目？",function(index) {
+          $.ajax({
+            type: "get",
+            url: "/project/deleteOneProject",
+            data: {_id:obj.data._id},
+            dataType: "json",
+            success: function (res) {
+              if (res.SUCCESS == 1) {
+                obj.del();
+                layer.msg("删除成功",{
+                  time:2000
+                });
+                layer.close(index);
+              }
+            }
+          });
+        });
+      break; 
     }
   });
 });

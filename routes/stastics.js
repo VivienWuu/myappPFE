@@ -23,7 +23,7 @@ function statusOfStaffInDay(docsInDB,targetDate){
   var groupArray = ['组别','领班','排故工程师','ME/CB','AV','STR','工卡与计划室'];
   var statusArray = [groupArray,['在岗',0,0,0,0,0,0],['请假',0,0,0,0,0,0],['培训',0,0,0,0,0,0]];
   for (i=0;i<docsInDB.length;i++) {
-    if (docsInDB[i].statusOfStaff == []) { // no special status
+    if (docsInDB[i].statusOfStaff.length == 0) { // no special status
       var groupOfthisStaff = groupArray.indexOf(docsInDB[i].groupOfStaff); // get group of this staff
       statusArray[1][groupOfthisStaff]  = statusArray[1][groupOfthisStaff] + 1; // add 1 staff 
     } else { // special status

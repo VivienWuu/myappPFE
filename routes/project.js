@@ -52,7 +52,7 @@ router.get("/deleteOneProject",function(req,res,next) {
     if (err) {
       res.json({SUCCESS:0});
     } else {
-      res.json({SUCCESS:1,doc:documents});
+      res.json({SUCCESS:1});
     }
   });
 });

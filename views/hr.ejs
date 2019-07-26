@@ -57,12 +57,10 @@
     <script type="text/html" id="toolbarStaffTable">
       <div class="layui-btn-container">
         <button class="layui-btn layui-btn-sm" lay-event="addOneStaff">添加一名人员</button>
-        <input id="add_status" value="" hidden="hidden">
-        <input id="change">
       </div>
     </script> 
     <script type="text/html" id="barStaffTable">
-      <a class="layui-btn layui-btn-xs" lay-event="editValue">编辑人员信息</a><input id="ifChangeValue" value="" hidden="hidden">
+      <a class="layui-btn layui-btn-xs" lay-event="editValue">编辑人员信息</a>
       <a class="layui-btn layui-btn-xs" lay-event="editStatus">编辑人员状态</a><input id="ifChangeStatus" value="" hidden="hidden">
       <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delStaff">删除人员</a>
     </script>
@@ -116,18 +114,16 @@ layui.use('table', function(){
           ,content: "/IframeAddStaff"
           ,success:function(){}
           ,end:function(){
-            var add_status = $("#add_status").val();
-            if(add_status == "1"){
+            var resFromIframe = layui.data('res');
+            if(resFromIframe.SUCCESS){
               layer.msg('添加成功！',{
                     time: 2000 
                 },function(){
                     history.go(0);
                 });
-            }else if (add_status == "0"){
+            }else {
               layer.msg('添加失败！',{
                     time: 2000
-                },function(){
-                    history.go(0);
                 });
             }
           }
@@ -138,11 +134,11 @@ layui.use('table', function(){
   //监听行工具事件
   table.on('tool(staffTable)', function(obj){
     var data = obj.data;
-    layui.data("openedDocument",{key:"idStaff",value:obj.data.idStaff});
-    layui.data("openedDocument",{key:"nameOfStaff",value:obj.data.nameOfStaff});
-    layui.data("openedDocument",{key:"postOfStaff",value:obj.data.postOfStaff});
-    layui.data("openedDocument",{key:"groupOfStaff",value:obj.data.groupOfStaff});
-    layui.data("openedDocument",{key:"majorOfStaff",value:obj.data.majorOfStaff});
+    layui.data("openedStaff",{key:"idStaff",value:obj.data.idStaff});
+    layui.data("openedStaff",{key:"nameOfStaff",value:obj.data.nameOfStaff});
+    layui.data("openedStaff",{key:"postOfStaff",value:obj.data.postOfStaff});
+    layui.data("openedStaff",{key:"groupOfStaff",value:obj.data.groupOfStaff});
+    layui.data("openedStaff",{key:"majorOfStaff",value:obj.data.majorOfStaff});
     switch(obj.event){
       case "editValue":
         layer.open({
@@ -152,19 +148,18 @@ layui.use('table', function(){
           ,content:"/IframeChangeStaffValue"
           ,success:function(){}
           ,end:function(){
-            layui.data('document', null);
-            var ifChangeValue = $("#ifCHangeValue").val();
-            if(ifChangeValue == "1"){
+            layui.data('openedStaff', null);
+            var resFromIframe = layui.data('res');
+            layui.data('res',null);
+            if(resFromIframe.SUCCESS){
               layer.msg('编辑成功！',{
                     time: 2000 
                 },function(){
                     history.go(0);
                 });
-            }else if (ifChangeValue == "0"){
+            }else {
               layer.msg('编辑失败！',{
                     time: 2000
-                },function(){
-                    history.go(0);
                 });
             }
           }

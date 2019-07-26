@@ -62,14 +62,9 @@ layui.use('form',function() {
       data:dataFromForm,
       dataType:'json',
       success:function(res){
-        var thisIframe = parent.layer.getFrameIndex(window.name); // get this framw's object
-        if (res.SUCCESS == 1) {
-          $$("#add_status").val("1"); // transfer res to father
-          parent.layui.layer.close(thisIframe);
-        } else {
-          $$("#add_status").val("0");
-          parent.layer.close(thisIframe); // close this frame
-        } 
+        var thisIframe = parent.layer.getFrameIndex(window.name); // get this frame's object
+        layui.data('res',{key:"SUCCESS",value:res.SUCCESS});
+        parent.layui.layer.close(thisIframe);
       }
     });
   });

@@ -30,6 +30,11 @@ router.get('/project',function(req,res,next){
 router.get('/IframeAddProject',function(req,res,next){ 
   res.render('iframes/addProject',{title:"/IframeAddProject"});
 });
+// 项目清单页面：修改项目子页面
+router.get('/IframeChangeProject',function(req,res,next){
+  res.render("iframes/changeProject",{title:'/IframeChangeProject'});
+});
+
 // 获取人力安排页面
 router.get('/arrangement',function(req,res,next){
   res.render('arrangement',{ title: 'OBV2人力资源管理系统' })

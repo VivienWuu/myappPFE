@@ -81,16 +81,16 @@ layui.use(['form','jquery'],function(){
   var $$ = parent.layui.$;
   
   // 父子页面传参
-  var openedDocument = layui.data('openedDocument');
-  $("#idCurrent")[0].innerHTML = openedDocument.idStaff;
-  $("#nameCurrent")[0].innerHTML = openedDocument.nameOfStaff;
-  $("#postCurrent")[0].innerHTML = openedDocument.postOfStaff;
-  $("#majorCurrent")[0].innerHTML = openedDocument.majorOfStaff;
-  $("#groupCurrent")[0].innerHTML = openedDocument.groupOfStaff;
+  var openedStaff = layui.data('openedStaff');
+  $("#idCurrent")[0].innerHTML = openedStaff.idStaff;
+  $("#nameCurrent")[0].innerHTML = openedStaff.nameOfStaff;
+  $("#postCurrent")[0].innerHTML = openedStaff.postOfStaff;
+  $("#majorCurrent")[0].innerHTML = openedStaff.majorOfStaff;
+  $("#groupCurrent")[0].innerHTML = openedStaff.groupOfStaff;
 
   form.on("submit(changeForm)",function(data){
     var dataFromForm = data.field;
-    dataFromForm['idStaff'] = openedDocument.idStaff;
+    dataFromForm['idStaff'] = openedStaff.idStaff;
     console.log(dataFromForm);
     $.ajax({
       type: "get",
@@ -99,13 +99,8 @@ layui.use(['form','jquery'],function(){
       dataType: "json",
       success: function (res) {
         var thisIframe = parent.layer.getFrameIndex(window.name);
-        if(res.SUCCESS == 1) {
-          $$("#ifChangeValue").val("1");
-          parent.layui.layer.close(thisIframe);
-        }else{
-          $$("#ifChangeValue").val("0");
-          parent.layer.close(thisIframe);
-        }
+        layui.data('res',{key:"SUCCESS",value:res.SUCCESS});
+        parent.layui.layer.close(thisIframe);
       }
     });
   });
