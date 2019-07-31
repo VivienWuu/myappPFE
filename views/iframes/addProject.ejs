@@ -21,17 +21,13 @@
       <div class="layui-input-inline"  style="width: 38px">
         <input type="number" name="hourAV"  placeholder=0 autocomplete="off" class="layui-input" style="width: 50px">
       </div>
-      <label class="layui-form-label">CB计划工时</label>
+      <label class="layui-form-label">CB/ME计划工时</label>
       <div class="layui-input-inline"  style="width: 38px">
-        <input type="number" name="hourCB" placeholder=0  autocomplete="off" class="layui-input" style="width: 50px">
+        <input type="number" name="hourCBME" placeholder=0  autocomplete="off" class="layui-input" style="width: 50px">
       </div>
-      <label class="layui-form-label">ME计划工时</label>
-      <div class="layui-input-inline"  style="width: 38px">
-        <input type="number" name="hourME" placeholder=0  autocomplete="off" class="layui-input" style="width: 50px">
-      </div>
-      <label class="layui-form-label">STR计划工时</label>
+      <label class="layui-form-label">CL/STR计划工时</label>
       <div class="layui-input-inline"  style="width: 38px"> 
-        <input type="number" name="hourSTR" placeholder=0 autocomplete="off" class="layui-input" style="width: 50px">
+        <input type="number" name="hourCLSTR" placeholder=0 autocomplete="off" class="layui-input" style="width: 50px">
       </div>
     </div>
   </div>
@@ -83,15 +79,9 @@ layui.use(['form','laydate'],function(){
   });
   form.on('submit(addform)',function(data){
     var dataFromForm = data.field;
-    dataFromForm['hourOfProject'] = [dataFromForm.hourAV,dataFromForm.hourCB,dataFromForm.hourME,dataFromForm.hourSTR];
-    dataFromForm.startdateOfProject = dataFromForm.startdateOfProject.split('');
-    dataFromForm.startdateOfProject.splice(7,1);
-    dataFromForm.startdateOfProject.splice(4,1);
-    dataFromForm.startdateOfProject = parseInt(dataFromForm.startdateOfProject.join(''));
-    dataFromForm.enddateOfProject = dataFromForm.enddateOfProject.split('');
-    dataFromForm.enddateOfProject.splice(7,1);
-    dataFromForm.enddateOfProject.splice(4,1);
-    dataFromForm.enddateOfProject = parseInt(dataFromForm.enddateOfProject.join(''));
+    dataFromForm['hourOfProject'] = [data.field.hourAV,data.field.hourCBME,data.field.hourCLSTR];
+    dataFromForm.startdateOfProject = dataFromForm.startdateOfProject;
+    dataFromForm.enddateOfProject = dataFromForm.enddateOfProject;
     $.ajax({
       url:'/project/addOneProject',
       type:'get',

@@ -21,17 +21,13 @@
         <div class="layui-input-inline"  style="width: 38px">
           <input type="number" name="hourAV" id="hourAV" placeholder=0 autocomplete="off" class="layui-input" style="width: 50px">
         </div>
-        <label class="layui-form-label">CB计划工时</label>
+        <label class="layui-form-label">CB/ME计划工时</label>
         <div class="layui-input-inline"  style="width: 38px">
-          <input type="number" name="hourCB" id="hourCB" placeholder=0  autocomplete="off" class="layui-input" style="width: 50px">
+          <input type="number" name="hourCBME" id="hourCBME" placeholder=0  autocomplete="off" class="layui-input" style="width: 50px">
         </div>
-        <label class="layui-form-label">ME计划工时</label>
-        <div class="layui-input-inline"  style="width: 38px">
-          <input type="number" name="hourME" id="hourME" placeholder=0  autocomplete="off" class="layui-input" style="width: 50px">
-        </div>
-        <label class="layui-form-label">STR计划工时</label>
+        <label class="layui-form-label">CL/STR计划工时</label>
         <div class="layui-input-inline"  style="width: 38px"> 
-          <input type="number" name="hourSTR" id="hourSTR" placeholder=0 autocomplete="off" class="layui-input" style="width: 50px">
+          <input type="number" name="hourCLSTR" id="hourCLSTR" placeholder=0 autocomplete="off" class="layui-input" style="width: 50px">
         </div>
       </div>
     </div>
@@ -65,17 +61,17 @@ layui.use(['form','laydate'],function(){
   var openedProject = layui.data('openedProject');
   $("#nameOfProject")[0].placeholder = openedProject.nameOfProject;
   $('#hourAV')[0].placeholder = openedProject.hourAV;
-  $('#hourCB')[0].placeholder = openedProject.hourCB;
-  $('#hourME')[0].placeholder = openedProject.hourME;
-  $('#hourSTR')[0].placeholder = openedProject.hourSTR;
+  $('#hourCBME')[0].placeholder = openedProject.hourCBME;
+  $('#hourCLSTR')[0].placeholder = openedProject.hourCLSTR;
   $('#startdate')[0].placeholder = openedProject.startdateOfProject;
   $('#enddate')[0].placeholder = openedProject.enddateOfProject;
   form.on('submit(changeform)',function(data){
-    data['_id'] = openedProject._id;
+    data.field['_id'] = openedProject._id;
+    console.log(data.field);
     $.ajax({
       type: "get",
       url: "/project/changeProjectValue",
-      data: data,
+      data: data.field,
       dataType: "json",
       success: function (res) {
         layui.data('res',{key:"SUCCESS",value:res.SUCCESS});

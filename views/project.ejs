@@ -83,16 +83,11 @@ layui.use('table', function(){
     ,url: '/project/getAllProject' //数据接口
     ,parseData: function(res){ //res 即为原始返回的数据
       for (var i=0;i<res.length;i++) {
-        var startdate = res[i].startdateOfProject.toString();
-        var enddate = res[i].enddateOfProject.toString();
-        res[i].startdateOfProject = startdate.slice(0,4)+"-"+startdate.slice(4,6)+"-"+startdate.slice(6,8);
-        res[i].enddateOfProject = enddate.slice(0,4)+"-"+enddate.slice(4,6)+"-"+enddate.slice(6,8); 
         res[i]['hourAV'] = res[i].hourOfProject[0];
-        res[i]['hourCB'] = res[i].hourOfProject[1];
-        res[i]['hourME'] = res[i].hourOfProject[2];
-        res[i]['hourSTR'] = res[i].hourOfProject[3];
+        res[i]['hourCBME'] = res[i].hourOfProject[1];
+        res[i]['hourCLSTR'] = res[i].hourOfProject[2];
+        res[i]['totalHour'] = res[i].hourOfProject[0] + res[i].hourOfProject[1] + res[i].hourOfProject[2];
         res[i].hourOfProject = null;
-        res[i]['totalHour'] = res[i]['hourAV'] + res[i]['hourCB'] + res[i]['hourME'] + res[i]['hourSTR'];
       }
       return {
         "code": 0, //解析接口状态
@@ -109,11 +104,10 @@ layui.use('table', function(){
       ,{field: 'nameOfProject', title: '项目名称', sort: true, fixed: 'left'}
       ,{field: 'startdateOfProject', title: '项目开始日期'}
       ,{field: 'enddateOfProject', title: '项目结束日期'}
-      ,{field: 'hourAV', title: 'AV所需工时', sort: true}
-      ,{field: 'hourCB', title: 'CB所需工时'} 
-      ,{field: 'hourME', title: 'ME所需工时'}
-       ,{field: 'hourSTR', title: 'STR所需工时', sort: true}
-       ,{field: 'totalHour', title: '总工时'}
+      ,{field: 'hourAV', title: 'AV所需工时'}
+      ,{field: 'hourCBME', title: 'CB/ME所需工时'} 
+      ,{field: 'hourCLSTR', title: 'CL/STR所需工时'}
+      ,{field: 'totalHour', title: '总工时'}
       ,{fixed: 'right',title:'操作',toolbar:'#barProjectTable'}
     ]]
   });
@@ -154,9 +148,8 @@ layui.use('table', function(){
     layui.data('openedProject',{key:"_id",value:obj.data._id});
     layui.data('openedProject',{key:"nameOfProject",value:obj.data.nameOfProject});
     layui.data('openedProject',{key:"hourAV",value:obj.data.hourAV});
-    layui.data('openedProject',{key:"hourCB",value:obj.data.hourCB});
-    layui.data('openedProject',{key:"hourME",value:obj.data.hourME});
-    layui.data('openedProject',{key:"hourSTR",value:obj.data.hourSTR});
+    layui.data('openedProject',{key:"hourCBME",value:obj.data.hourCBME});
+    layui.data('openedProject',{key:"hourCLSTR",value:obj.data.hourCLSTR});
     layui.data('openedProject',{key:"startdateOfProject",value:obj.data.startdateOfProject});
     layui.data('openedProject',{key:"enddateOfProject",value:obj.data.enddateOfProject});
     switch(obj.event){
@@ -170,7 +163,7 @@ layui.use('table', function(){
             layui.data('openedProject',null);
             var resFromIframe = layui.data('res');
             layui.data('res',null);
-            if (resFromIframe == 1){
+            if (resFromIframe.SUCCESS == 1){
               layer.msg('编辑成功',{
                 time:2000
               },function(){

@@ -4,9 +4,8 @@ var router = express.Router();
 
 var db = require("../database/models.js");
 
-// VARIABLE : today with correct format: "1970-01-01" -> 19700101 
-var date = new Date();
-var today = date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
+// VARIABLE : today 
+var today = new Date();
 
 // FUNC : get all staff information of today
 // REQ : N/A
@@ -55,11 +54,12 @@ router.get('/changeStaffValue',function(req,res,next) {
 // RES : JSON {SUCCESS:1/0/-1} add a special status or change status fail or delete a special status
 router.get('/changeStaffStatus',function(req,res,next) {
   db.staffmodel.findOne({idStaff:req.query.idStaff},function(err,result) {
-    req.query.date = parseInt(req.query.date); // transfer date form String to Number
     if (result && result.statusOfStaff !=[] && req.query.reason == "在岗") { 
       var indexList = -1;
       for (i=0;i<result.statusOfStaff.length;i++) {
-        if(req.query.date == result.statusOfStaff[i].date){
+        var browserList = req.query.date.split("/");
+        var databaseList = result.statusOfStaff[i].date.toLocaleDateString().split("-");
+        if(browserList[0]==databaseList[0] && browserList[1]==databaseList[1] && browserList[2]==databaseList[2]){
           indexList = i;
           result.statusOfStaff.splice(indexList,1);
           break;
@@ -76,7 +76,9 @@ router.get('/changeStaffStatus',function(req,res,next) {
     }else if (result && result.statusOfStaff !=[] && req.query.reason != "在岗") {
       var indexList = -1;
       for (i=0;i<result.statusOfStaff.length;i++) {
-        if(req.query.date == result.statusOfStaff[i].date){
+        var browserList = req.query.date.split("/");
+        var databaseList = result.statusOfStaff[i].date.toLocaleDateString().split("-");
+        if(browserList[0]==databaseList[0] && browserList[1]==databaseList[1] && browserList[2]==databaseList[2]){
           indexList = i;
           result.statusOfStaff.splice(indexList,1);
           result.statusOfStaff.push({date:req.query.date,reason:req.query.reason});
@@ -100,7 +102,11 @@ router.get('/changeStaffStatus',function(req,res,next) {
 router.get('/searchStaffStatus',function(req,res,next) {
   db.staffmodel.findOne({idStaff:req.query.idStaff},function(err,result) {
     if (result) {
-      res.json(result.statusOfStaff);  
+      var statusList = [];
+      for (var i=0;i<result.statusOfStaff.length;i++) {
+        statusList.push({date:result.statusOfStaff[i].date.toLocaleDateString(),reason:result.statusOfStaff[i].reason});
+      }
+      res.json(statusList);  
     } else {
       res.json({SUCCESS:0});
     }    
@@ -125,15 +131,26 @@ router.get('/deleteOneStaff',function(req,res,next) {
 //         NUMBER target date to transfer format  
 // OUTPUT : 
 function format(docsInDB,targetDate) { 
-  var docsInWeb = docsInDB;
-  for (i=0;i<docsInDB.length;i++) {
-    docsInWeb[i].statusOfStaff = "在岗";
-    if (docsInDB[i].statusOfStaff.length != 0) {
-      for (j=0;j<docsInDB[i].statusOfStaff.length;j++) {
-        if (targetDate == docsInDB[i].statusOfStaff[j].date) {
-          docsInWeb[i].statusOfStaff = docsInDB[i].statusOfStaff[j].reason;
+  var docsInWeb = [];
+  if (docsInDB.length) {
+    for (var i=0;i<docsInDB.length;i++) {
+      var objectStaff =  {
+        idStaff : docsInDB[i].idStaff,
+        nameOfStaff : docsInDB[i].nameOfStaff,
+        postOfStaff : docsInDB[i].postOfStaff,
+        groupOfStaff : docsInDB[i].groupOfStaff,
+        majorOfStaff : docsInDB[i].majorOfStaff,
+        statusOfStaff:'在岗'
+      }
+      if (docsInDB[i].statusOfStaff.length) {
+        for (j=0;j<docsInDB[i].statusOfStaff.length;j++) {
+          if (targetDate.toLocaleDateString() == docsInDB[i].statusOfStaff[j].date.toLocaleDateString()) {
+            objectStaff.statusOfStaff = docsInDB[i].statusOfStaff[j].reason;
+            break;
+          }
         }
       }
+      docsInWeb.push(objectStaff);
     }
   }
   return docsInWeb;

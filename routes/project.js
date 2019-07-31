@@ -12,7 +12,18 @@ router.get("/getAllProject",function(req,res,next) {
     if (err) {
       console.error(err);
     } else {
-      res.json(documents);
+      var projectList = [];
+      for (var i=0;i<documents.length;i++) {
+        var projectObject = {
+          _id:documents[i]._id,
+          nameOfProject:documents[i].nameOfProject,
+          startdateOfProject: documents[i].startdateOfProject.toLocaleDateString(),
+          enddateOfProject: documents[i].enddateOfProject.toLocaleDateString(),
+          hourOfProject:documents[i].hourOfProject
+        };
+        projectList.push(projectObject);
+      }
+      res.json(projectList);
     }
   });
 });
@@ -35,10 +46,19 @@ router.get("/addOneProject",function(req,res,next) {
 });
 
 router.get('/changeProjectValue',function(req,res,next) {
-  db.projectmodel.findByIdAndUpdate(req.query._id,req.query,function(err){
+  var projectObject = {
+    _id:req.query._id,
+    nameOfProject: req.query.nameOfProject,
+    startdateOfProject:req.query.startdateOfProject,
+    enddateOfProject : req.query.enddateOfProject,
+    hourOfProject:[parseInt(req.query.hourAV),parseInt(req.query.hourCBME),parseInt(req.query.hourCLSTR)]
+  }
+  db.projectmodel.updateOne({_id:projectObject._id},projectObject,function(err){
     if (err) {
+      console.log(0);
       res.json({SUCCESS:0});
     } else {
+      console.log(1);
       res.json({SUCCESS:1});
     }
   });

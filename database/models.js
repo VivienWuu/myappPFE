@@ -8,13 +8,13 @@ var staffSchema = new mongoose.Schema({
   groupOfStaff:{type:String},
   majorOfStaff:{type:String},
   postOfStaff:{type:String},
-  statusOfStaff:{type:Array}
+  statusOfStaff:[{_id:false,date:Date,reason:String}]
 },{versionKey:false});
 
 var projectSchema = new mongoose.Schema({
   nameOfProject:{type:String,required:true},
-  startdateOfProject:{type:Number,required:true},
-  enddateOfProject:{type:Number,required:true},
+  startdateOfProject:{type:Date,required:true},
+  enddateOfProject:{type:Date,required:true},
   hourOfProject:{type:Array}
 },{versionKey:false});
 

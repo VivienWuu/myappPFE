@@ -66,8 +66,8 @@ layui.use(['laydate','form','jquery'],function(){
   
   // get staff status from database and display in laydate
   var staffStatus = {};
-  var date = new Date();
-  var targetDate = date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();;
+  var targetDate = new Date();
+  targetDate = targetDate.toLocaleDateString();
   $.ajax({
     type: "get",
     async: false,
@@ -76,10 +76,7 @@ layui.use(['laydate','form','jquery'],function(){
     dataType: "json",
     success: function (res) {
       for(i=0;i<res.length;i++){
-        var yearInLaydate = parseInt(res[i].date/10000);
-        var monthInLaydate = parseInt((res[i].date - yearInLaydate*10000)/100);
-        var dayInLaydate =  parseInt(res[i].date - yearInLaydate * 10000 - monthInLaydate * 100);
-        var dateinLaydate = yearInLaydate + "-" + monthInLaydate + "-" + dayInLaydate;
+        var dateinLaydate = res[i].date;
         staffStatus[dateinLaydate] = res[i].reason;
       }
     }
@@ -90,7 +87,8 @@ layui.use(['laydate','form','jquery'],function(){
     ,showBottom: false
     ,mark:staffStatus
     ,done:function(value){
-      targetDate = parseInt(value.slice(0,4)) * 10000 + parseInt(value.slice(5,7)) * 100 + parseInt(value.slice(8,10));
+      targetDate = new Date(value);
+      targetDate = targetDate.toLocaleDateString();
       console.log(targetDate);
     }
   });
