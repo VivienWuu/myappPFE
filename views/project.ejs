@@ -198,7 +198,16 @@ layui.use('table', function(){
       break; 
     }
   });
+  //监听双击行事件
+  table.on('rowDouble(projectTable)',function(obj){
+    layer.confirm('确认对该项目进行人力安排？',function(index){
+      layui.data('projectToArrange',{key:'_id',value:obj.data._id});
+      layer.close(index);
+      window.location.href = '/arrangement';
+    });
+  });
 });
+
 layui.use('element', function(){
   var element = layui.element;
   

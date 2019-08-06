@@ -55,10 +55,8 @@ router.get('/changeProjectValue',function(req,res,next) {
   }
   db.projectmodel.updateOne({_id:projectObject._id},projectObject,function(err){
     if (err) {
-      console.log(0);
       res.json({SUCCESS:0});
     } else {
-      console.log(1);
       res.json({SUCCESS:1});
     }
   });

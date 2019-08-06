@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/layui_dist/css/layui.css">
+  <link rel="stylesheet" href="/stylesheets/bodystyle.css">
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+      <a href="/"><div class="layui-logo"><%= title %></div></a>
+      <!-- 头部区域（可配合layui已有的水平导航） -->
+      <ul class="layui-nav layui-layout-right">
+        <li class="layui-nav-item">
+          <a href="javascript:;">
+            <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+            贤心
+          </a>
+          <dl class="layui-nav-child">
+            <dd><a href="">基本资料</a></dd>
+            <dd><a href="">安全设置</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item"><a href="">退了</a></li>
+      </ul>
+    </div>
+    
+    <div class="layui-side layui-bg-black">
+      <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+        <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+          <li class="layui-nav-item layui-nav-itemed">
+            <a class="" href="javascript:;">人力资源管理</a>
+            <dl class="layui-nav-child">
+              <dd><a href="/humanresource">人员列表</a></dd>
+              <dd><a href="/project">项目列表</a></dd>
+              <dd><a href="/arrangement">人力安排</a></dd>
+              <dd><a href="/hrChart">计划总览</a></dd>
+            </dl>
+          </li>
+          <li class="layui-nav-item">
+            <a href="javascript:;">工时统计</a>
+            <dl class="layui-nav-child">
+              <dd><a href="javascript:;">子列表占位符一</a></dd>
+              <dd><a href="javascript:;">子列表占位符二</a></dd>
+            </dl>
+          </li>
+        </ul>
+      </div>
+    </div>
+   
+    <div class="layui-body">
+    <!-- 内容主体区域 -->
+      <div class="indexBackground layui-col-space10">
+        <div class="layui-col-md3">
+          <div class="layui-card">
+            <div class="layui-card-header">选择项目时间</div>
+            <div class="layui-card-body">
+              <table class="layui-table">
+                <thead>
+                  <tr>
+                    <th>项目名称</th>
+                    <th>起始日期</th>
+                    <th>结束日期</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td id="nameOfProject"></td>
+                    <td id="startdateOfProject"></td>
+                    <td id="enddateOfProject"></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="layui-box" id="dateChoose"></div>
+            </div>
+          </div>
+        </div>
+        <div class="layui-col-md9 layui-col-space10">
+          <div class="layui-col-md3">
+            <table id="staffToArrangeTable" lay-filter="staffToArrangeTable"></table>
+          </div>
+          <div class="layui-col-md3">
+            <table id="staffAVTable" layfilter="staffAVTable"></table>
+          </div>
+          <div class="layui-col-md3">
+            <table id="staffCBMETable" layfilter="staffCBMETable"></table>
+          </div>
+          <div class="layui-col-md3">
+            <table id="staffCLSTRTable" layfilter="staffCLSTRTable"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="layui-footer">
+      <!-- 底部固定区域 -->
+      © layui.com - 底部固定区域
+    </div>
+  </div>
+<script src="Sortablejs/Sortable.js"></script>
+<script src="/layui_dist/layui.js"></script>
+<script>
+layui.use(['table','laydate'],function(){
+  var $ = layui.$;
+  var laydate = layui.laydate;
+  var table = layui.table;
+  var projectToArrange = layui.data("projectToArrange");
+  $.ajax({
+    type: "get",
+    url: "/arrangement/getProjectInfo",
+    data: projectToArrange,
+    dataType: "json",
+    success: function (response) {
+      $("#nameOfProject").html(response.nameOfProject);
+      $("#startdateOfProject").html(response.startdateOfProject);
+      $("#enddateOfProject").html(response.enddateOfProject);
+      laydate.render({
+        elem:"#dateChoose",
+        position:'static',
+        value:response.startdateOfProject,
+        min:response.startdateOfProject,
+        max:response.enddateOfProject,
+        showBottom:false
+      });
+    }
+  });
+  table.render({
+    elem: '#staffToArrangeTable',
+    height: 'full-200',
+    page: false,
+    url: 'staff/getAllStaff', //TODO 新的URL，后端需要进行判断，传回可用的人员
+    parseData : function(res) {
+      return {
+        "code": 0, //解析接口状态
+        "msg": " ", //解析提示文本
+        "count": res.length, //解析数据长度
+        "data": res //解析数据列表
+      };
+    },
+    cols:[[
+      {align:'center',title:"可用人员",colspan:3}
+    ],[
+      {field:'idStaff',title:'职编'},
+      {field:'nameOfStaff',title:"姓名"},
+      {field:'groupOfStaff',title:"组别"}
+    ]]
+  });
+  table.render({
+    elem: '#staffAVTable',
+    height:'full-200',
+    page:false,
+    url: 'staff/getAllStaff', //'/arrangement/getProjectArrangement',
+    // methed:'get',
+    // where: projectToArrange,
+    // contentType: 'application/json'
+    parseData: function(res) {
+      return {
+        "code": 0, //解析接口状态
+        "msg": " ", //解析提示文本
+        "count": res.length, //解析数据长度
+        "data": res //解析数据列表
+      }
+    },
+    cols:[[
+      {align:'center',title:"AV",colspan:3}
+    ],[
+      {field:'idStaff',title:'职编'},
+      {field:'nameOfStaff',title:'姓名'},
+      {field:'groupOfStaff',title:'组别'}
+    ]]
+  });
+  table.render({
+    elem: '#staffCBMETable',
+    height:'full-200',
+    page:false,
+    url: 'staff/getAllStaff', //'/arrangement/getProjectArrangement',
+    // methed:'get',
+    // where: projectToArrange,
+    // contentType: 'application/json'
+    parseData: function(res) {
+      return {
+        "code": 0, //解析接口状态
+        "msg": " ", //解析提示文本
+        "count": res.length, //解析数据长度
+        "data": {} //解析数据列表
+      }
+    },
+    cols:[[
+      {align:'center',title:"CB/ME",colspan:3}
+    ],[
+      {field:'idStaff',title:'职编'},
+      {field:'nameOfStaff',title:'姓名'},
+      {field:'groupOfStaff',title:'组别'}
+    ]]
+  });
+  table.render({
+    elem: '#staffCLSTRTable',
+    height:'full-200',
+    page:false,
+    url: 'staff/getAllStaff', //'/arrangement/getProjectArrangement',
+    // methed:'get',
+    // where: projectToArrange,
+    // contentType: 'application/json'
+    parseData: function(res) {
+      return {
+        "code": 0, //解析接口状态
+        "msg": " ", //解析提示文本
+        "count": res.length, //解析数据长度
+        "data": {} //解析数据列表
+      }
+    },
+    cols:[[
+      {align:'center',title:"CL/STR",colspan:3}
+    ],[
+      {field:'idStaff',title:'职编'},
+      {field:'nameOfStaff',title:'姓名'},
+      {field:'groupOfStaff',title:'组别'}
+    ]]
+  });
+  var tbody1 = $('div[lay-id$=staffToArrangeTable] tbody')[0];
+  var tbody2 = $('div[lay-id$=staffAVTable] tbody')[0];
+  var tbody3 = $('div[lay-id$=staffCBMETable] tbody')[0];
+  var tbody4 = $('div[lay-id$=staffCLSTRTable] tbody')[0];
+  $('div[lay-id$=staffAVTable] thead').css('overfollow-y','scroll');
+  console.log($('div[lay-id$=staffAVTable] table'));
+  new Sortable(tbody1,{
+    group: 'shared', // set both lists to same group
+    animation: 150
+  });
+  new Sortable(tbody2,{
+    group: 'shared', // set both lists to same group
+    animation: 150
+  });
+  new Sortable(tbody3,{
+    group: 'shared', // set both lists to same group
+    animation: 150
+  });
+  new Sortable(tbody4,{
+    group: 'shared', // set both lists to same group
+    animation: 150
+  });
+});
+layui.use('element', function(){
+  var element = layui.element;
+  
+});
+</script>
+</body>
+</html>

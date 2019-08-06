@@ -34,11 +34,6 @@ router.get('/IframeAddProject',function(req,res,next){
 router.get('/IframeChangeProject',function(req,res,next){
   res.render("iframes/changeProject",{title:'/IframeChangeProject'});
 });
-
-// 获取人力安排页面
-router.get('/arrangement',function(req,res,next){
-  res.render('arrangement',{ title: 'OBV2人力资源管理系统' })
-});
 // 获取计划总览页面
 router.get('/hrChart',function(req,res,next){
   res.render('hrChart',{ title: 'OBV2人力资源管理系统' })
