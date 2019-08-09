@@ -2,7 +2,7 @@
 var express = require("express");
 var router = express.Router();
 
-var db = require("../database/models.js");
+var db = require("../database/models");
 
 // VARIABLE : today 
 var today = new Date();

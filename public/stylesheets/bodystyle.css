@@ -14,3 +14,19 @@
 #dateChoose .layui-laydate-content td,#dateChoose .layui-laydate-content th {
   width:1000px;
 }
+
+.layui-table {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.theadBox {
+  overflow-y: scroll;
+}
+.tbodyBox {
+  height: 72vh;
+  overflow-y: scroll;
+}
+
+.selected {
+  color: firebrick;
+}

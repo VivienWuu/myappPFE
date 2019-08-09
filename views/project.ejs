@@ -100,15 +100,15 @@ layui.use('table', function(){
     ,toolbar: '#toolbarProjectTable'
     ,cols: [[ //表头
       {checkbox:true, fixed: true}
-      ,{field: '_id', title: '项目编号', sort: true, fixed: 'left'}
-      ,{field: 'nameOfProject', title: '项目名称', sort: true, fixed: 'left'}
+      ,{field: '_id', title: '项目编号', sort: true,hide:true}
+      ,{field: 'nameOfProject', title: '项目名称', sort: true}
       ,{field: 'startdateOfProject', title: '项目开始日期'}
       ,{field: 'enddateOfProject', title: '项目结束日期'}
       ,{field: 'hourAV', title: 'AV所需工时'}
       ,{field: 'hourCBME', title: 'CB/ME所需工时'} 
       ,{field: 'hourCLSTR', title: 'CL/STR所需工时'}
       ,{field: 'totalHour', title: '总工时'}
-      ,{fixed: 'right',title:'操作',toolbar:'#barProjectTable'}
+      ,{title:'操作',toolbar:'#barProjectTable'}
     ]]
   });
 
@@ -201,7 +201,7 @@ layui.use('table', function(){
   //监听双击行事件
   table.on('rowDouble(projectTable)',function(obj){
     layer.confirm('确认对该项目进行人力安排？',function(index){
-      layui.data('projectToArrange',{key:'_id',value:obj.data._id});
+      layui.sessionData('projectToArrange',{key:'_id',value:obj.data._id});
       layer.close(index);
       window.location.href = '/arrangement';
     });

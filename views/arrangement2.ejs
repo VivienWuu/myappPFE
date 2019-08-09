@@ -57,7 +57,7 @@
       <div class="indexBackground layui-col-space10">
         <div class="layui-col-md3">
           <div class="layui-card">
-            <div class="layui-card-header">选择项目时间</div>
+            <div class="layui-card-header"><button id="arrangeSubmit" class="layui-btn layui-btn-sm">提交</button></div>
             <div class="layui-card-body">
               <table class="layui-table">
                 <thead>
@@ -79,20 +79,84 @@
             </div>
           </div>
         </div>
-        <div class="layui-col-md9 layui-col-space10">
+        <div class="tableSortable layui-col-md9">
           <div class="layui-col-md3">
-            <table id="staffToArrangeTable" lay-filter="staffToArrangeTable"></table>
+            <div class="theadBox">
+              <table class="layui-table">
+                <thead>
+                  <tr><th colspan="3">可用人员</th></tr>
+                  <tr>
+                    <th>职编</th>
+                    <th>姓名</th>
+                    <th>组别</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+            <div class="tbodyBox">
+              <table class="layui-table" id="staffAvailbleTable">
+                <tbody></tbody>
+              </table>
+            </div>
           </div>
           <div class="layui-col-md3">
-            <table id="staffAVTable" layfilter="staffAVTable"></table>
+              <div class="theadBox">
+                <table class="layui-table">
+                  <thead>
+                    <tr><th colspan="3">AV</th></tr>
+                    <tr>
+                      <th>职编</th>
+                      <th>姓名</th>
+                      <th>组别</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+              <div class="tbodyBox">
+                <table class="layui-table" id="staffAVTable">
+                  <tbody></tbody>
+                </table>
+              </div>
           </div>
           <div class="layui-col-md3">
-            <table id="staffCBMETable" layfilter="staffCBMETable"></table>
+              <div class="theadBox">
+                <table class="layui-table">
+                  <thead>
+                    <tr><th colspan="3">CB/ME</th></tr>
+                    <tr>
+                      <th>职编</th>
+                      <th>姓名</th>
+                      <th>组别</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+              <div class="tbodyBox">
+                <table class="layui-table" id="staffCBMETable">
+                  <tbody></tbody>
+                </table>
+              </div>
           </div>
           <div class="layui-col-md3">
-            <table id="staffCLSTRTable" layfilter="staffCLSTRTable"></table>
+              <div class="theadBox">
+                <table class="layui-table">
+                  <thead>
+                    <tr><th colspan="3">CL/STR</th></tr>
+                    <tr>
+                      <th>职编</th>
+                      <th>姓名</th>
+                      <th>组别</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+              <div class="tbodyBox">
+                <table class="layui-table" id="staffCLSTRTable">
+                  <tbody></tbody>
+                </table>
+              </div>
           </div>
-        </div>
+        </div> 
       </div>
     </div>
     
@@ -104,12 +168,22 @@
 <script src="Sortablejs/Sortable.js"></script>
 <script src="/layui_dist/layui.js"></script>
 <script>
+var isTableChange = 0;
+
 layui.use(['table','laydate'],function(){
   var $ = layui.$;
   var laydate = layui.laydate;
   var table = layui.table;
-  var projectToArrange = layui.data("projectToArrange");
-  $.ajax({
+  
+  // get project's id user selected
+  var projectToArrange = layui.sessionData("projectToArrange");
+  if (JSON.stringify(projectToArrange) == "{}") {
+    layer.msg('尚未选取项目');
+    setTimeout(function(){
+      history.go(-1);
+    },1000);
+  } else {
+    $.ajax({
     type: "get",
     url: "/arrangement/getProjectInfo",
     data: projectToArrange,
@@ -128,122 +202,62 @@ layui.use(['table','laydate'],function(){
       });
     }
   });
-  table.render({
-    elem: '#staffToArrangeTable',
-    height: 'full-200',
-    page: false,
-    url: 'staff/getAllStaff', //TODO 新的URL，后端需要进行判断，传回可用的人员
-    parseData : function(res) {
-      return {
-        "code": 0, //解析接口状态
-        "msg": " ", //解析提示文本
-        "count": res.length, //解析数据长度
-        "data": res //解析数据列表
-      };
-    },
-    cols:[[
-      {align:'center',title:"可用人员",colspan:3}
-    ],[
-      {field:'idStaff',title:'职编'},
-      {field:'nameOfStaff',title:"姓名"},
-      {field:'groupOfStaff',title:"组别"}
-    ]]
-  });
-  table.render({
-    elem: '#staffAVTable',
-    height:'full-200',
-    page:false,
-    url: 'staff/getAllStaff', //'/arrangement/getProjectArrangement',
-    // methed:'get',
-    // where: projectToArrange,
-    // contentType: 'application/json'
-    parseData: function(res) {
-      return {
-        "code": 0, //解析接口状态
-        "msg": " ", //解析提示文本
-        "count": res.length, //解析数据长度
-        "data": res //解析数据列表
-      }
-    },
-    cols:[[
-      {align:'center',title:"AV",colspan:3}
-    ],[
-      {field:'idStaff',title:'职编'},
-      {field:'nameOfStaff',title:'姓名'},
-      {field:'groupOfStaff',title:'组别'}
-    ]]
-  });
-  table.render({
-    elem: '#staffCBMETable',
-    height:'full-200',
-    page:false,
-    url: 'staff/getAllStaff', //'/arrangement/getProjectArrangement',
-    // methed:'get',
-    // where: projectToArrange,
-    // contentType: 'application/json'
-    parseData: function(res) {
-      return {
-        "code": 0, //解析接口状态
-        "msg": " ", //解析提示文本
-        "count": res.length, //解析数据长度
-        "data": {} //解析数据列表
-      }
-    },
-    cols:[[
-      {align:'center',title:"CB/ME",colspan:3}
-    ],[
-      {field:'idStaff',title:'职编'},
-      {field:'nameOfStaff',title:'姓名'},
-      {field:'groupOfStaff',title:'组别'}
-    ]]
-  });
-  table.render({
-    elem: '#staffCLSTRTable',
-    height:'full-200',
-    page:false,
-    url: 'staff/getAllStaff', //'/arrangement/getProjectArrangement',
-    // methed:'get',
-    // where: projectToArrange,
-    // contentType: 'application/json'
-    parseData: function(res) {
-      return {
-        "code": 0, //解析接口状态
-        "msg": " ", //解析提示文本
-        "count": res.length, //解析数据长度
-        "data": {} //解析数据列表
-      }
-    },
-    cols:[[
-      {align:'center',title:"CL/STR",colspan:3}
-    ],[
-      {field:'idStaff',title:'职编'},
-      {field:'nameOfStaff',title:'姓名'},
-      {field:'groupOfStaff',title:'组别'}
-    ]]
-  });
-  var tbody1 = $('div[lay-id$=staffToArrangeTable] tbody')[0];
-  var tbody2 = $('div[lay-id$=staffAVTable] tbody')[0];
-  var tbody3 = $('div[lay-id$=staffCBMETable] tbody')[0];
-  var tbody4 = $('div[lay-id$=staffCLSTRTable] tbody')[0];
-  $('div[lay-id$=staffAVTable] thead').css('overfollow-y','scroll');
-  console.log($('div[lay-id$=staffAVTable] table'));
-  new Sortable(tbody1,{
-    group: 'shared', // set both lists to same group
-    animation: 150
-  });
-  new Sortable(tbody2,{
-    group: 'shared', // set both lists to same group
-    animation: 150
-  });
-  new Sortable(tbody3,{
-    group: 'shared', // set both lists to same group
-    animation: 150
-  });
-  new Sortable(tbody4,{
-    group: 'shared', // set both lists to same group
-    animation: 150
+  } 
+
+  // initiate sortable 
+  var sortableTables = [
+    $('#staffAvailbleTable tbody')[0],
+    $('#staffAVTable tbody')[0],
+    $('#staffCBMETable tbody')[0],
+    $('#staffCLSTRTable tbody')[0]
+  ]
+  for(var i=0;i<sortableTables.length;i++) {
+   new Sortable(sortableTables[i],{
+    group:'arrangeTable',
+    multiDrag:true,
+    selectedClass:'selected',
+    animation:250,
+    onEnd: function (evt) {
+      isTableChange = 1;
+    }
+   }); 
+  }
+
+  // test code (need to delete)
+  var testJson = [
+  {idStaff:'126',nameOfStaff:'测试姓名',groupOfStaff:'测试组别'},
+  {idStaff:'256',nameOfStaff:'测试姓名',groupOfStaff:'测试组别'},
+  {idStaff:'456',nameOfStaff:'测试姓名',groupOfStaff:'测试组别'}
+  ];
+  sortableTableServerToWeb(testJson,'#staffCLSTRTable tbody');
+  
+  $('#arrangeSubmit').click(function(){
+  
   });
 });
+
+// catch data from each table
+function sortableTableWebToServer(trID) {
+  var trList = layui.$(trID);
+  var tbodyJson = [];
+  for (var i=0;i<trList.length;i++) { 
+    tbodyJson.push({
+      idStaff:trList[i].children[0].innerText,
+      nameOfStaff:trList[i].children[1].innerText,
+      groupOfStaff:trList[i].children[2].innerText
+    });
+  }
+  return tbodyJson;
+}
+// render list to tbody
+function sortableTableServerToWeb (tbodyJson,tbodyID) {
+  for (var i=0;i<tbodyJson.length;i++) {
+    layui.$(tbodyID).append(
+      '<tr><td style="width:33%">' + tbodyJson[i].idStaff + '</td><td style="width:33%">' + tbodyJson[i].nameOfStaff + '</td><td style="width:33%">' + tbodyJson[i].groupOfStaff + '</td></tr>'
+    );
+  }
+}
+
 layui.use('element', function(){
   var element = layui.element;
   
