@@ -115,6 +115,7 @@ layui.use('table', function(){
           ,success:function(){}
           ,end:function(){
             var resFromIframe = layui.data('res');
+            layui.data('res',null);
             if(resFromIframe.SUCCESS){
               layer.msg('添加成功！',{
                     time: 2000 
@@ -123,8 +124,8 @@ layui.use('table', function(){
                 });
             }else {
               layer.msg('添加失败！',{
-                    time: 2000
-                });
+                time: 2000
+              });
             }
           }
         });

@@ -70,7 +70,6 @@ layui.use(['form','laydate'],function(){
   var form = layui.form;
   var laydate = layui.laydate;
   var $ = layui.$;
-  var $$ = parent.layui.$;
   laydate.render({
     elem:"#startdate"
   });
@@ -80,8 +79,6 @@ layui.use(['form','laydate'],function(){
   form.on('submit(addform)',function(data){
     var dataFromForm = data.field;
     dataFromForm['hourOfProject'] = [data.field.hourAV,data.field.hourCBME,data.field.hourCLSTR];
-    dataFromForm.startdateOfProject = dataFromForm.startdateOfProject;
-    dataFromForm.enddateOfProject = dataFromForm.enddateOfProject;
     $.ajax({
       url:'/project/addOneProject',
       type:'get',
@@ -90,10 +87,9 @@ layui.use(['form','laydate'],function(){
       success:function(data){
         var thisIframe = parent.layer.getFrameIndex(window.name);
         if(data.SUCCESS == 1) {
-          $$("#add_status").val("1"); // transfer res to father
+          layui.data('res',{key:"SUCCESS",value:data.SUCCESS});
           parent.layui.layer.close(thisIframe);
         }else{
-          $$("#add_status").val("0"); // transfer res to father
           parent.layui.layer.close(thisIframe);
         } 
       }
@@ -102,7 +98,6 @@ layui.use(['form','laydate'],function(){
 });
 layui.use('element', function(){
   var element = layui.element;
-  
 });
 </script>
 </body>

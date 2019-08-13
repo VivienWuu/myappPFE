@@ -97,11 +97,10 @@ layui.use(['laydate','jquery'],function(){
     ,position: 'static'
     ,showBottom: false
     ,done: function(value) {
-      var targetDate = parseInt(value.slice(0,4)) * 10000 + parseInt(value.slice(5,7)) * 100 + parseInt(value.slice(8,10));
       $.ajax({
         url:'/stastics/statusInDay',
         type:'get',
-        data:{date:targetDate},
+        data:{date:value},
         dataType:'json',
         success:function(data){
             option.dataset.source = data;
@@ -125,7 +124,7 @@ var option = {
     tooltip: {},
     dataset: {
         source: [
-      ['组别', '领班','排故工程师','ME/CB','AV','STR','工卡与计划室'],
+      ['组别', '领班','排故工程师','AV','CB/ME','CL/STR','工卡与计划室'],
       ['在岗',0,0,0,0,0,0],
       ['请假',0,0,0,0,0,0],
       ['培训',0,0,0,0,0,0]] 

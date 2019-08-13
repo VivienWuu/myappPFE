@@ -192,13 +192,64 @@ layui.use(['table','laydate'],function(){
       $("#nameOfProject").html(response.nameOfProject);
       $("#startdateOfProject").html(response.startdateOfProject);
       $("#enddateOfProject").html(response.enddateOfProject);
+      
+      var targetDate = new Date(response.startdateOfProject);
+      targetDate = targetDate.toLocaleDateString();
+      $.ajax({
+        type: "get",
+        url: "/arrangement/getStaffAvailble",
+        data: {_id:response._id,targetDate:targetDate},
+        dataType: "json",
+        success: function (res) {
+          sortableTableServerToWeb(res.staffAvailbleList,'#staffAvailbleTable tbody');
+          sortableTableServerToWeb(res.threeGroupList[0],'#staffAVTable tbody');
+          sortableTableServerToWeb(res.threeGroupList[1],'#staffCBMETable tbody');
+          sortableTableServerToWeb(res.threeGroupList[2],'#staffCLSTRTable tbody');
+        }
+      });
       laydate.render({
         elem:"#dateChoose",
         position:'static',
         value:response.startdateOfProject,
         min:response.startdateOfProject,
         max:response.enddateOfProject,
-        showBottom:false
+        showBottom:false,
+        done: function(value) {
+          var targetDate = new Date(value);
+          targetDate = targetDate.toLocaleDateString();
+          if (isTableChange == 1) {
+            layer.alert('您尚未提交，是否确认切换',function(index) {
+              $.ajax({
+                type: "get",
+                url: "/arrangement/getStaffAvailble",
+                data: {_id:response._id,targetDate:targetDate},
+                dataType: "json",
+                success: function (res) {
+                  sortableTableServerToWeb(res.staffAvailbleList,'#staffAvailbleTable tbody');
+                  sortableTableServerToWeb(res.threeGroupList[0],'#staffAVTable tbody');
+                  sortableTableServerToWeb(res.threeGroupList[1],'#staffCBMETable tbody');
+                  sortableTableServerToWeb(res.threeGroupList[2],'#staffCLSTRTable tbody');
+                  isTableChange = 0;
+                }
+              });
+              layer.close(index);
+            });
+          } else {
+            $.ajax({
+              type: "get",
+              url: "/arrangement/getStaffAvailble",
+              data: {_id:response._id,targetDate:targetDate},
+              dataType: "json",
+              success: function (res) {
+                sortableTableServerToWeb(res.staffAvailbleList,'#staffAvailbleTable tbody');
+                sortableTableServerToWeb(res.threeGroupList[0],'#staffAVTable tbody');
+                sortableTableServerToWeb(res.threeGroupList[1],'#staffCBMETable tbody');
+                sortableTableServerToWeb(res.threeGroupList[2],'#staffCLSTRTable tbody');
+                isTableChange = 0;
+              }
+            });
+          }
+        }
       });
     }
   });
@@ -217,20 +268,13 @@ layui.use(['table','laydate'],function(){
     multiDrag:true,
     selectedClass:'selected',
     animation:250,
-    onEnd: function (evt) {
+    onAdd: function (evt) {
       isTableChange = 1;
     }
    }); 
   }
 
   // test code (need to delete)
-  var testJson = [
-  {idStaff:'126',nameOfStaff:'测试姓名',groupOfStaff:'测试组别'},
-  {idStaff:'256',nameOfStaff:'测试姓名',groupOfStaff:'测试组别'},
-  {idStaff:'456',nameOfStaff:'测试姓名',groupOfStaff:'测试组别'}
-  ];
-  sortableTableServerToWeb(testJson,'#staffCLSTRTable tbody');
-  
   $('#arrangeSubmit').click(function(){
   
   });
@@ -251,10 +295,13 @@ function sortableTableWebToServer(trID) {
 }
 // render list to tbody
 function sortableTableServerToWeb (tbodyJson,tbodyID) {
-  for (var i=0;i<tbodyJson.length;i++) {
-    layui.$(tbodyID).append(
-      '<tr><td style="width:33%">' + tbodyJson[i].idStaff + '</td><td style="width:33%">' + tbodyJson[i].nameOfStaff + '</td><td style="width:33%">' + tbodyJson[i].groupOfStaff + '</td></tr>'
-    );
+  layui.$(tbodyID).empty();
+  if (tbodyJson.length != 0) {
+    for (var i=0;i<tbodyJson.length;i++) {
+      layui.$(tbodyID).append(
+        '<tr><td style="width:33%">' + tbodyJson[i].idStaff + '</td><td style="width:33%">' + tbodyJson[i].nameOfStaff + '</td><td style="width:33%">' + tbodyJson[i].groupOfStaff + '</td></tr>'
+      );
+    }
   }
 }
 

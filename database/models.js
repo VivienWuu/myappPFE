@@ -16,7 +16,9 @@ var projectSchema = new mongoose.Schema({
   startdateOfProject:{type:Date,required:true},
   enddateOfProject:{type:Date,required:true},
   hourOfProject:{type:Array},
-  arrangement:{type:Array}
+  avListOfProject:{type:Array},
+  cbmeListOfProject:{type:Array},
+  clstrListOfProject:{type:Array}
 },{versionKey:false});
 
 var staffmodel = mongoose.model('staffmodel',staffSchema,'STAFF');
