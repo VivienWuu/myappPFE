@@ -50,6 +50,7 @@
   </div>
 </form>
 <script src="/layui_dist/layui.js"></script>
+<script src="/moment/moment.js"></script>
 <script>
 layui.use(['laydate','form','jquery'],function(){
   var laydate = layui.laydate;
@@ -66,8 +67,7 @@ layui.use(['laydate','form','jquery'],function(){
   
   // get staff status from database and display in laydate
   var staffStatus = {};
-  var targetDate = new Date();
-  targetDate = targetDate.toLocaleDateString();
+  var targetDate = moment().startOf('Day').format();
   $.ajax({
     type: "get",
     async: false,
@@ -76,7 +76,7 @@ layui.use(['laydate','form','jquery'],function(){
     dataType: "json",
     success: function (res) {
       for(i=0;i<res.length;i++){
-        var dateinLaydate = res[i].date;
+        var dateinLaydate = moment(res[i].date).format('YYYY-M-D');
         staffStatus[dateinLaydate] = res[i].reason;
       }
     }
@@ -87,8 +87,7 @@ layui.use(['laydate','form','jquery'],function(){
     ,showBottom: false
     ,mark:staffStatus
     ,done:function(value){
-      targetDate = new Date(value);
-      targetDate = targetDate.toLocaleDateString();
+      targetDate = moment(value).startOf('Day').format();
       console.log(targetDate);
     }
   });

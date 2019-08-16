@@ -159,17 +159,18 @@
         </div> 
       </div>
     </div>
-    
     <div class="layui-footer">
       <!-- 底部固定区域 -->
       © layui.com - 底部固定区域
     </div>
   </div>
 <script src="Sortablejs/Sortable.js"></script>
+<script src="/moment/moment.js"></script>
 <script src="/layui_dist/layui.js"></script>
 <script>
 var isTableChange = 0;
-
+var _id = "";
+var targetDate ="";
 layui.use(['table','laydate'],function(){
   var $ = layui.$;
   var laydate = layui.laydate;
@@ -184,86 +185,50 @@ layui.use(['table','laydate'],function(){
     },1000);
   } else {
     $.ajax({
-    type: "get",
-    url: "/arrangement/getProjectInfo",
-    data: projectToArrange,
-    dataType: "json",
-    success: function (response) {
-      $("#nameOfProject").html(response.nameOfProject);
-      $("#startdateOfProject").html(response.startdateOfProject);
-      $("#enddateOfProject").html(response.enddateOfProject);
-      
-      var targetDate = new Date(response.startdateOfProject);
-      targetDate = targetDate.toLocaleDateString();
-      $.ajax({
-        type: "get",
-        url: "/arrangement/getStaffAvailble",
-        data: {_id:response._id,targetDate:targetDate},
-        dataType: "json",
-        success: function (res) {
-          sortableTableServerToWeb(res.staffAvailbleList,'#staffAvailbleTable tbody');
-          sortableTableServerToWeb(res.threeGroupList[0],'#staffAVTable tbody');
-          sortableTableServerToWeb(res.threeGroupList[1],'#staffCBMETable tbody');
-          sortableTableServerToWeb(res.threeGroupList[2],'#staffCLSTRTable tbody');
-        }
-      });
-      laydate.render({
-        elem:"#dateChoose",
-        position:'static',
-        value:response.startdateOfProject,
-        min:response.startdateOfProject,
-        max:response.enddateOfProject,
-        showBottom:false,
-        done: function(value) {
-          var targetDate = new Date(value);
-          targetDate = targetDate.toLocaleDateString();
-          if (isTableChange == 1) {
-            layer.alert('您尚未提交，是否确认切换',function(index) {
-              $.ajax({
-                type: "get",
-                url: "/arrangement/getStaffAvailble",
-                data: {_id:response._id,targetDate:targetDate},
-                dataType: "json",
-                success: function (res) {
-                  sortableTableServerToWeb(res.staffAvailbleList,'#staffAvailbleTable tbody');
-                  sortableTableServerToWeb(res.threeGroupList[0],'#staffAVTable tbody');
-                  sortableTableServerToWeb(res.threeGroupList[1],'#staffCBMETable tbody');
-                  sortableTableServerToWeb(res.threeGroupList[2],'#staffCLSTRTable tbody');
-                  isTableChange = 0;
-                }
+      type: "get",
+      url: "/arrangement/getProjectInfo",
+      data: projectToArrange,
+      dataType: "json",
+      success: function (res) {
+        $("#nameOfProject").html(res.nameOfProject);
+        $("#startdateOfProject").html(res.startdateOfProject);
+        $("#enddateOfProject").html(res.enddateOfProject);
+        
+        _id = res._id;
+        targetDate = moment(res.startdateOfProject).format();
+        downArrangement(res._id,targetDate)
+        laydate.render({
+          elem:"#dateChoose",
+          position:'static',
+          value:res.startdateOfProject,
+          min:res.startdateOfProject,
+          max:res.enddateOfProject,
+          showBottom:false,
+          done: function(value) {
+            var targetDate = moment(value).format();
+            if (isTableChange == 1) {
+              layer.alert('您尚未提交，是否确认切换',function(index) {
+                downArrangement(res._id,targetDate);
+                layer.close(index);
               });
-              layer.close(index);
-            });
-          } else {
-            $.ajax({
-              type: "get",
-              url: "/arrangement/getStaffAvailble",
-              data: {_id:response._id,targetDate:targetDate},
-              dataType: "json",
-              success: function (res) {
-                sortableTableServerToWeb(res.staffAvailbleList,'#staffAvailbleTable tbody');
-                sortableTableServerToWeb(res.threeGroupList[0],'#staffAVTable tbody');
-                sortableTableServerToWeb(res.threeGroupList[1],'#staffCBMETable tbody');
-                sortableTableServerToWeb(res.threeGroupList[2],'#staffCLSTRTable tbody');
-                isTableChange = 0;
-              }
-            });
+            } else  {
+              downArrangement(res._id,targetDate);
+            }
           }
-        }
-      });
-    }
-  });
+        });
+      }
+    });
   } 
 
   // initiate sortable 
-  var sortableTables = [
-    $('#staffAvailbleTable tbody')[0],
-    $('#staffAVTable tbody')[0],
-    $('#staffCBMETable tbody')[0],
-    $('#staffCLSTRTable tbody')[0]
+  var fourTbody = [
+    $('#staffAvailbleTable tbody'),
+    $('#staffAVTable tbody'),
+    $('#staffCBMETable tbody'),
+    $('#staffCLSTRTable tbody')
   ]
-  for(var i=0;i<sortableTables.length;i++) {
-   new Sortable(sortableTables[i],{
+  for(var i=0;i<fourTbody.length;i++) {
+   new Sortable(fourTbody[i][0],{
     group:'arrangeTable',
     multiDrag:true,
     selectedClass:'selected',
@@ -276,7 +241,10 @@ layui.use(['table','laydate'],function(){
 
   // test code (need to delete)
   $('#arrangeSubmit').click(function(){
-  
+    layer.alert('是否确定提交项目安排？',function(index) {
+      upArrangement(_id,targetDate);
+      layer.close(index);
+    })
   });
 });
 
@@ -284,12 +252,14 @@ layui.use(['table','laydate'],function(){
 function sortableTableWebToServer(trID) {
   var trList = layui.$(trID);
   var tbodyJson = [];
-  for (var i=0;i<trList.length;i++) { 
-    tbodyJson.push({
-      idStaff:trList[i].children[0].innerText,
-      nameOfStaff:trList[i].children[1].innerText,
-      groupOfStaff:trList[i].children[2].innerText
-    });
+  if (trList != null) {
+    for (var i=0;i<trList.length;i++) { 
+      tbodyJson.push({
+        idStaff:trList[i].children[0].innerText,
+        nameOfStaff:trList[i].children[1].innerText,
+        groupOfStaff:trList[i].children[2].innerText
+      });
+    }
   }
   return tbodyJson;
 }
@@ -305,6 +275,46 @@ function sortableTableServerToWeb (tbodyJson,tbodyID) {
   }
 }
 
+// ajax download arrangement
+function downArrangement (_id,targetDate) {
+  var url = '/arrangement/downloadStaffAvailble';
+  layui.$.ajax({
+    type: "get",
+    url: url,
+    data: {_id:_id,targetDate:targetDate},
+    dataType: "json",
+    success: function (res) {
+    sortableTableServerToWeb(res.staffAvailbleList,'#staffAvailbleTable tbody');
+    sortableTableServerToWeb(res.threeGroupList[0],'#staffAVTable tbody');
+    sortableTableServerToWeb(res.threeGroupList[1],'#staffCBMETable tbody');
+    sortableTableServerToWeb(res.threeGroupList[2],'#staffCLSTRTable tbody');
+    isTableChange = 0;
+    }
+  });
+}
+
+// ajax upload arragement 
+function upArrangement (_id,targetDate) {
+  var url = "/arrangement/uploadStaffArrangement";
+  var arrangementToUpload = {
+    avListOfProject:sortableTableWebToServer('#staffAVTable tr'),
+    cbmeListOfProject:sortableTableWebToServer('#staffCBMETable tr'),
+    clstrListOfProject: sortableTableWebToServer('#staffCLSTRTable tr')
+  }
+  layui.$.ajax({
+    type: "get",
+    url: url,
+    async:false,
+    data: {_id:_id,targetDate:targetDate,arrangementInDay:arrangementToUpload},
+    dataType: "json",
+    success: function (res) {
+      if (res.SUCCESS == 1) {
+        isTableChange = 0;
+      }
+    }
+  });
+  
+}
 layui.use('element', function(){
   var element = layui.element;
   

@@ -1,11 +1,10 @@
 // ROUTER : hr.ejs
 var express = require("express");
 var router = express.Router();
-
 var db = require("../database/models");
-
+var moment = require('moment');
 // VARIABLE : today 
-var today = new Date();
+var today = moment().startOf('Day');
 
 // FUNC : get all staff information of today
 // REQ : N/A
@@ -54,12 +53,14 @@ router.get('/changeStaffValue',function(req,res,next) {
 // RES : JSON {SUCCESS:1/0/-1} add a special status or change status fail or delete a special status
 router.get('/changeStaffStatus',function(req,res,next) {
   db.staffmodel.findOne({idStaff:req.query.idStaff},function(err,result) {
+    console.log(req.query.date);
+    console.log(result.statusOfStaff);
     if (result && result.statusOfStaff !=[] && req.query.reason == "在岗") { 
       var indexList = -1;
       for (i=0;i<result.statusOfStaff.length;i++) {
-        var browserList = req.query.date.split("/");
-        var databaseList = result.statusOfStaff[i].date.toLocaleDateString().split("-");
-        if(browserList[0]==databaseList[0] && browserList[1]==databaseList[1] && browserList[2]==databaseList[2]){
+        var dateFromWeb = req.query.date;
+        var dateFromDatabase = result.statusOfStaff[i].date;
+        if(dateFromWeb == dateFromDatabase){
           indexList = i;
           result.statusOfStaff.splice(indexList,1);
           break;
@@ -76,9 +77,9 @@ router.get('/changeStaffStatus',function(req,res,next) {
     }else if (result && result.statusOfStaff !=[] && req.query.reason != "在岗") {
       var indexList = -1;
       for (i=0;i<result.statusOfStaff.length;i++) {
-        var browserList = req.query.date.split("/");
-        var databaseList = result.statusOfStaff[i].date.toLocaleDateString().split("-");
-        if(browserList[0]==databaseList[0] && browserList[1]==databaseList[1] && browserList[2]==databaseList[2]){
+        var DateFromWeb = req.query.date;
+        var dateFromDatabase = result.statusOfStaff[i].date;
+        if(DateFromWeb == dateFromDatabase){
           indexList = i;
           result.statusOfStaff.splice(indexList,1);
           result.statusOfStaff.push({date:req.query.date,reason:req.query.reason});
@@ -104,7 +105,7 @@ router.get('/searchStaffStatus',function(req,res,next) {
     if (result) {
       var statusList = [];
       for (var i=0;i<result.statusOfStaff.length;i++) {
-        statusList.push({date:result.statusOfStaff[i].date.toLocaleDateString(),reason:result.statusOfStaff[i].reason});
+        statusList.push({date:result.statusOfStaff[i].date,reason:result.statusOfStaff[i].reason});
       }
       res.json(statusList);  
     } else {
@@ -144,7 +145,7 @@ function format(docsInDB,targetDate) {
       }
       if (docsInDB[i].statusOfStaff.length) {
         for (j=0;j<docsInDB[i].statusOfStaff.length;j++) {
-          if (targetDate.toLocaleDateString() == docsInDB[i].statusOfStaff[j].date.toLocaleDateString()) {
+          if (targetDate == docsInDB[i].statusOfStaff[j].date) {
             objectStaff.statusOfStaff = docsInDB[i].statusOfStaff[j].reason;
             break;
           }

@@ -8,17 +8,15 @@ var staffSchema = new mongoose.Schema({
   groupOfStaff:{type:String},
   majorOfStaff:{type:String},
   postOfStaff:{type:String},
-  statusOfStaff:[{_id:false,date:Date,reason:String}]
+  statusOfStaff:[{_id:false,date:String,reason:String}]
 },{versionKey:false});
 
 var projectSchema = new mongoose.Schema({
   nameOfProject:{type:String,required:true},
-  startdateOfProject:{type:Date,required:true},
-  enddateOfProject:{type:Date,required:true},
+  startdateOfProject:{type:String,required:true},
+  enddateOfProject:{type:String,required:true},
   hourOfProject:{type:Array},
-  avListOfProject:{type:Array},
-  cbmeListOfProject:{type:Array},
-  clstrListOfProject:{type:Array}
+  arrangementOfProject:[{_id:false,avListOfProject:Array,cbmeListOfProject:Array,clstrListOfProject:Array}]
 },{versionKey:false});
 
 var staffmodel = mongoose.model('staffmodel',staffSchema,'STAFF');
