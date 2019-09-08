@@ -34,6 +34,11 @@ router.get('/IframeAddProject',function(req,res,next){
 router.get('/IframeChangeProject',function(req,res,next){
   res.render("iframes/changeProject",{title:'/IframeChangeProject'});
 });
+// 项目清单页面：查看修改计划工时页面
+router.get('/IframeChangeHour',function(req,res,next) {
+  res.render('iframes/changeHour',{title:'/IframeChangeHour'});
+});
+
 // 获取计划总览页面
 router.get('/hrChart',function(req,res,next){
   res.render('hrChart',{ title: 'OBV2人力资源管理系统' })

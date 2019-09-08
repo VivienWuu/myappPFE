@@ -9,7 +9,7 @@
   <form class="layui-form" action="">
     <div class="layui-form-item">
       <label class="layui-form-label">职编</label>
-      <div class="layui-input-block"><input type="text" name="idStaff" lay-verify="required" lay-reqtext="请输入人员职编" autocomplete="off" class="layui-input"></div>
+      <div class="layui-input-block"><input type="text" name="idStaff" lay-verify="idStaff" autocomplete="off" class="layui-input"></div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">姓名</label>
@@ -21,7 +21,7 @@
     </div> 
     <div class="layui-form-item">
       <label class="layui-form-label">组别</label>
-      <div class="layui-input-block">
+      <div class="layui-input-block" lay-verify='groupOfStaff'>
         <input type="radio" name="groupOfStaff" value="领班" title="领班">
         <input type="radio" name="groupOfStaff" value="排故工程师" title="排故工程师">
         <input type="radio" name="groupOfStaff" value="AV" title="AV">
@@ -32,13 +32,20 @@
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">专业</label>
-      <div class="layui-input-block">
+      <div class="layui-input-block" lay-verify='majorOfStaff'>
         <input type="radio" name="majorOfStaff" value="ME" title="ME">
         <input type="radio" name="majorOfStaff" value="AV" title="AV">
         <input type="radio" name="majorOfStaff" value="CB" title="CB">
         <input type="radio" name="majorOfStaff" value="STR" title="STR">
         <input type="radio" name="majorOfStaff" value="" title="暂无">
       </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">工时系数</label>
+      <div class="layui-input-inline" style="width: 30px">
+        <input type="number" name="hourOfStaff" lay-verify="required" lay-reqtext="请输入工时系数" placeholder=0  autocomplete="off" class="layui-input" style="width: 40px;">
+      </div>
+      <label class="layui-form-label">小时/天 </label>
     </div>
     <div class="layui-form-item">
       <div class="layui-input-block">
@@ -53,6 +60,23 @@ layui.use('form',function() {
   var form = layui.form;
   var $ = layui.$;
   var $$ = parent.layui.$;
+  form.verify({
+    idStaff: function (value,item) {
+      if (!/^[1-9]\d*$/.test(parseInt(value))) {
+        return '职编须为数字';
+      }
+    },
+    groupOfStaff :function (value,item) {
+      if(!$(item).find(".layui-form-radio").hasClass("layui-form-radioed")) {
+        return '请选择人员组别';
+      }
+    },
+    majorOfStaff : function (value,item) {
+      if(!$(item).find(".layui-form-radio").hasClass("layui-form-radioed")) {
+        return '请选择人员专业';
+      }
+    }
+  });
   form.on('submit(addForm)',function(data) {
     var dataFromForm = data.field;
     console.log(dataFromForm);

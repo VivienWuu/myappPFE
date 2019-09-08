@@ -1,7 +1,7 @@
 // ROUTER：main.ejs
 var express = require("express");
 var router = express.Router();
-
+var moment = require('moment');
 var db = require("../database/models.js");
 
 // FUNC : show all staff status  
@@ -16,37 +16,33 @@ router.get('/statusInDay',function(req,res,next) {
 
 // FUNC : transfer data to fullfill Echarts request
 // INPUT : ARRAY documents from database 
-//         NUMBER the day shall be shown
+//         String the day shall be shown
 // OUTPUT : ARRAY data to Echarts
 function statusOfStaffInDay(docsInDB,targetDate){  
-  targetDate = new Date(targetDate);
-  targetDate = targetDate.toLocaleDateString();
   var groupArray = ['组别','领班','排故工程师','AV','CB/ME','CL/STR','工卡与计划室'];
   var statusArray = [groupArray,['在岗',0,0,0,0,0,0],['请假',0,0,0,0,0,0],['培训',0,0,0,0,0,0]];
-  for (i=0;i<docsInDB.length;i++) {
-    if (docsInDB[i].statusOfStaff.length == 0) { // no special status
-      var groupOfthisStaff = groupArray.indexOf(docsInDB[i].groupOfStaff); // get group of this staff
+  docsInDB.forEach(function (item){
+    var groupOfthisStaff = groupArray.indexOf(item.groupOfStaff); // get group of this staff
+    if (item.statusOfStaff.length == 0) { // no special status
       statusArray[1][groupOfthisStaff]  = statusArray[1][groupOfthisStaff] + 1; // add 1 staff 
     } else { // special status
       var isWork = 1;
-      for (j=0;j<docsInDB[i].statusOfStaff.length;j++) {
-        if (targetDate == docsInDB[i].statusOfStaff[j].date.toLocaleDateString()) { // if date in special status
-          var groupOfthisStaff = groupArray.indexOf(docsInDB[i].groupOfStaff); // get group of staff
-          if (docsInDB[i].statusOfStaff[j].reason == statusArray[2][0]) {
+      item.statusOfStaff.forEach(function (itemJ,index) {
+        if (targetDate == itemJ.date) {
+          if (itemJ.reason == statusArray[2][0]) {
             statusArray[2][groupOfthisStaff]  = statusArray[2][groupOfthisStaff] + 1;
             isWork = 0;
-          }else if (docsInDB[i].statusOfStaff[j].reason == statusArray[3][0]) {
+          } else if (itemJ.reason == statusArray[3][0]) {
             statusArray[3][groupOfthisStaff]  = statusArray[3][groupOfthisStaff] + 1;
             isWork = 0;
-          };
-          break;
+          }
         }
-      }
-      if (isWork == 1) {
-        statusArray[1][groupOfthisStaff]  = statusArray[1][groupOfthisStaff] + 1;
-      }
+        if (isWork == 1) {
+          statusArray[1][groupOfthisStaff]  = statusArray[1][groupOfthisStaff] + 1;
+        }
+      });
     }
-  }
+  });
   return statusArray;
 }
 

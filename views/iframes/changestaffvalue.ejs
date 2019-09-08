@@ -23,7 +23,7 @@
     <div class="layui-form-item">
       <label class="layui-form-label"></label>
       <div class="layui-input-block">
-        <input type="text" name="nameOfStaff" lay-verify="required" lay-reqtext="请输入人员姓名" placeholder="请输入新姓名" autocomplete="off" class="layui-input">
+        <input type="text" name="nameOfStaff" id="nameOfStaff" lay-verify="required" lay-reqtext="请输入人员姓名" placeholder="请输入新姓名" autocomplete="off" class="layui-input">
       </div>
     </div>
     <div class="layui-form-item">
@@ -33,7 +33,7 @@
     <div class="layui-form-item">
       <label class="layui-form-label"></label>
       <div class="layui-input-block">
-        <input type="text" name="postOfStaff" lay-verify="required" lay-reqtext="请输入人员岗位名称" placeholder="请输入人员岗位名称" autocomplete="off" class="layui-input">
+        <input type="text" name="postOfStaff" id="postOfStaff" lay-verify="required" lay-reqtext="请输入人员岗位名称" placeholder="请输入人员岗位名称" autocomplete="off" class="layui-input">
       </div>
     </div>
     <div class="layui-form-item">
@@ -66,6 +66,13 @@
         </div>
     </div>
     <div class="layui-form-item">
+      <label class="layui-form-label">工时系数</label>
+      <div class="layui-input-inline" style="width: 30px">
+        <input type="number" name="hourOfStaff" id="hourOfProject" lay-verify="required" lay-reqtext="请输入工时系数" placeholder=0  autocomplete="off" class="layui-input" style="width: 40px;">
+      </div>
+      <label class="layui-form-label">小时/天 </label>
+    </div>
+    <div class="layui-form-item">
       <div class="layui-input-block">
         <button class="layui-btn" lay-submit="" lay-filter="changeForm">提交信息</button>
         <button type="reset" class="layui-btn layui-btn-primary">重置</button>
@@ -83,13 +90,16 @@ layui.use(['form','jquery'],function(){
   // 父子页面传参
   var openedStaff = layui.data('openedStaff');
   $("#idCurrent")[0].innerHTML = openedStaff.idStaff;
+  $("#nameOfStaff").val(openedStaff.nameOfStaff);
   $("#nameCurrent")[0].innerHTML = openedStaff.nameOfStaff;
+  $("#postOfStaff").val(openedStaff.postOfStaff);
   $("#postCurrent")[0].innerHTML = openedStaff.postOfStaff;
   $("#majorCurrent")[0].innerHTML = openedStaff.majorOfStaff;
   $("#groupCurrent")[0].innerHTML = openedStaff.groupOfStaff;
-
+  $("#hourOfProject").val(openedStaff.hourOfStaff);
   form.on("submit(changeForm)",function(data){
     var dataFromForm = data.field;
+    dataFromForm['_id'] = openedStaff._id;
     dataFromForm['idStaff'] = openedStaff.idStaff;
     console.log(dataFromForm);
     $.ajax({

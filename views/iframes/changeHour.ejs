@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="/layui_dist/css/layui.css">
+  <title><%= title %></title>
+  <style>
+    body {
+      font-size: 16px;
+    }
+    .avSlider,.cbmeSlider,.clstrSlider{
+      margin-top: 10px;
+    }
+    .layui-slider-input {
+      margin-top: 5px;
+      height: 28px;
+    }
+  </style>
+</head>
+<body>
+<div class="layui-row">
+  <!-- 数据表格 -->
+  <table id="hourTable" lay-filter="hourTable"></table>
+  <script type="text/html" id="toolbarHour">
+    <div>
+      <button class="layui-btn layui-btn-sm" lay-event="updateNewHour">更新计划工时</button>
+      <hr>
+    </div>
+    <span>根据选中的日期进行整体数据操作：</span> 
+    <div class="layui-row">
+    <div class="layui-col-xs4">
+      <span>AV计划工时：</span>
+      <input type="number" class="layui-input-inline" style='width:50px;' id="avTotalHour">
+      <button class="layui-btn layui-btn-xs" lay-event="avChangeTotal">确定</button>
+    </div>
+    <div class="layui-col-xs4">
+      <span>CBME计划工时：</span>
+      <input type="number" class="layui-input-inline" style='width:50px;' id="cbmeTotalHour">
+      <button class="layui-btn layui-btn-xs" lay-event="cbmeChangeTotal">确定</button>
+    </div>
+    <div class="layui-col-xs4">
+      <span>CLSTR计划工时：</span>
+      <input type="number" class="layui-input-inline" style='width:50px;' id="clstrTotalHour">
+      <button class="layui-btn layui-btn-xs" lay-event="clstrChangeTotal">确定</button>
+    </div>
+    </div>
+  </script>
+</div>
+<script src="/layui_dist/layui.js"></script>
+<script src="/moment/moment.js"></script>
+<script>
+layui.use(['table','slider'],function () {
+  var table = layui.table;
+  var slider = layui.slider;
+  var $ = layui.$;
+  var openedProject = layui.data('openedProject');
+  
+  var oneProject = {};
+  $.ajax({
+    type: "get",
+    url: "/project/getOneProjectHour",
+    async:false,
+    data: {_id:openedProject._id},
+    dataType: "json",
+    success: function (res) {
+      if (res.SUCCESS) {
+        console.log(res);
+        oneProject = res.oneProject;
+      }
+    }
+  });
+  table.render({
+    elem:'#hourTable',
+    data: oneProject,
+    toolbar:'#toolbarHour',
+    cols: [[
+      {checkbox:true,fixed:true},
+      {field:"hiddenIndex",title:"hiddenIndex",hide:true},
+      {field:'dateInProject',title:'日期',width:'15%'},
+      {field:'avSlider',title:'AV计划工时',templet:"<div><div class='avSlider'></div></div>"},
+      {field:'avTotalHour',title:'AV实际工时',width:'10%'},
+      {field:'cbmeSlider',title:'CBME计划工时',templet:"<div><div class='cbmeSlider'></div></div>"},
+      {field:'cbmeTotalHour',title:'CBME实际工时',width:'10%'},
+      {field:'clstrSlider',title:'CLSTR计划工时',templet:"<div><div class='clstrSlider'></div></div>"},
+      {field:'clstrTotalHour',title:'CLSTR组实际工时',width:'10%'}
+    ]],
+    height: '447px',
+    done: function () {
+      $(".avSlider").each(function(i,item) {
+          $(this).attr("id","avSlider-"+i);
+          slider.render({
+            elem:"#avSlider-"+i,
+            input:true,
+            value: oneProject[i].avHour
+          });
+      });
+      $(".cbmeSlider").each(function(i,item) {
+          $(this).attr("id","cbmeSlider-"+i);
+          slider.render({
+            elem:"#cbmeSlider-"+i,
+            input:true,
+            value: oneProject[i].cbmeHour
+          });
+      });
+      $(".clstrSlider").each(function(i,item) {
+          $(this).attr("id","clstrSlider-"+i);
+          slider.render({
+            elem:"#clstrSlider-"+i,
+            input:true,
+            value: oneProject[i].clstrHour
+          });
+      });
+    },
+    id: 'idtable'
+  });
+  table.on('toolbar(hourTable)',function(obj){
+    var layEvent = obj.event;
+    switch(layEvent) {
+      case "updateNewHour":
+        oneProject.forEach(function (item,index){
+          var avDomString = "#avSlider-" + index + " input";
+          var cbmeDomString = "#cbmeSlider-" + index + " input";
+          var clstrDomString = "#clstrSlider-" + index + " input";
+          item.avHour = parseInt($(avDomString)[0].value);
+          item.cbmeHour = parseInt($(cbmeDomString)[0].value);
+          item.clstrHour = parseInt($(clstrDomString)[0].value);
+        });
+        $.ajax({
+          type: "get",
+          url: "/project/changeProjectHour",
+          data: {_id:openedProject._id,oneProject:oneProject},
+          dataType: "json",
+          success: function (res) {
+            if (res.SUCCESS) {
+              alert('成功');
+            } else {
+              alert('失败');
+            }
+          }
+        });
+        break;
+      case "avChangeTotal":
+        var checktest = table.checkStatus('idtable');
+        checktest.data.forEach(function(item,index) {
+          $("#avSlider-" + item.hiddenIndex + " input")[0].value = $("#avTotalHour")[0].value;
+          $("#avSlider-" + item.hiddenIndex + " .layui-slider-wrap").css("left",$("#avTotalHour")[0].value + "%");
+          $("#avSlider-" + item.hiddenIndex + " .layui-slider-bar").css("width",$("#avTotalHour")[0].value + "%");
+        });
+        break;
+      case "cbmeChangeTotal":
+      var checktest = table.checkStatus('idtable');
+        checktest.data.forEach(function(item,index) {
+          $("#cbmeSlider-" + item.hiddenIndex + " input")[0].value = $("#cbmeTotalHour")[0].value;
+          $("#cbmeSlider-" + item.hiddenIndex + " .layui-slider-wrap").css("left",$("#cbmeTotalHour")[0].value + "%");
+          $("#cbmeSlider-" + item.hiddenIndex + " .layui-slider-bar").css("width",$("#cbmeTotalHour")[0].value + "%");
+        });
+        break;
+      case "clstrChangeTotal":
+      var checktest = table.checkStatus('idtable');
+        checktest.data.forEach(function(item,index) {
+          $("#clstrSlider-" + item.hiddenIndex + " input")[0].value = $("#clstrTotalHour")[0].value;
+          $("#clstrSlider-" + item.hiddenIndex + " .layui-slider-wrap").css("left",$("#clstrTotalHour")[0].value + "%");
+          $("#clstrSlider-" + item.hiddenIndex + " .layui-slider-bar").css("width",$("#clstrTotalHour")[0].value + "%");
+        });
+        break;
+    }
+  });
+});
+</script>
+</body>
+</html>

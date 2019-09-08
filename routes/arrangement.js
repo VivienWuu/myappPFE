@@ -19,9 +19,9 @@ router.get('/getProjectInfo',function(req,res,next) {
   });
 });
 
-router.get('/downloadStaffAvailble',function(req,res,next) {
+router.get('/downloadStaffAvailable',function(req,res,next) {
   var threeGroupList = [];
-  var staffAvailbleList = [];
+  var staffAvailableList = [];
   db.projectmodel.findById(req.query._id,function(err,document) {
     var targetDate = moment(req.query.targetDate);
     var startdateOfProject = moment(document.startdateOfProject);
@@ -30,31 +30,23 @@ router.get('/downloadStaffAvailble',function(req,res,next) {
     threeGroupList.push(document.arrangementOfProject[indexOfDate].cbmeListOfProject);
     threeGroupList.push(document.arrangementOfProject[indexOfDate].clstrListOfProject);
     db.staffmodel.find({groupOfStaff:{$in:['领班','AV','CB/ME','CL/STR']}},function(err,documents) {
-      for (i=0;i<documents.length;i++) {
-        if (documents[i].statusOfStaff.length == 0) { // no special status
-          staffAvailbleList.push({
-            idStaff:documents[i].idStaff,
-            nameOfStaff:documents[i].nameOfStaff,
-            groupOfStaff: documents[i].groupOfStaff            
+      documents.forEach(function (item) {
+        var isStaffAvaible = 1;
+        item.arrangementOfStaff.forEach(function (itemJ,index) {
+          if (itemJ.date.indexOf(targetDate.format()) != -1) {
+            isStaffAvaible = 0;
+          }
+        })
+        if (isStaffAvaible) {
+          staffAvailableList.push({
+            idStaff:item.idStaff,
+            nameOfStaff:item.nameOfStaff,
+            hourOfStaff:item.hourOfStaff,
+            groupOfStaff:item.groupOfStaff
           });
-        } else { // special status
-          var isAvailble = 1;
-          for (j=0;j<documents[i].statusOfStaff.length;j++) {
-            if (req.query.targetDate == documents[i].statusOfStaff[j].date) { // if date in special status
-              isAvailble = 0;
-              break;
-            }
-          }
-          if (isAvailble == 1) {
-            staffAvailbleList.push({
-              idStaff:documents[i].idStaff,
-              nameOfStaff:documents[i].nameOfStaff,
-              groupOfStaff: documents[i].groupOfStaff
-            });
-          }
         }
-      }
-      res.json({threeGroupList:threeGroupList,staffAvailbleList:staffAvailbleList});
+      })
+      res.json({threeGroupList:threeGroupList,staffAvailableList:staffAvailableList});
     });
   });
 });
@@ -66,8 +58,8 @@ router.get('/uploadStaffArrangement',function(req,res,next) {
     }
   });
   db.projectmodel.findById(req.query._id,function(err,document) {
-    var indexOfDate = moment(req.query.targetDate).diff(moment(document.startdateOfProject),'days');
-    
+    var targetDate = moment(req.query.targetDate)
+    var indexOfDate = targetDate.diff(moment(document.startdateOfProject),'days');
     var staffListChanged = [];
     document.arrangementOfProject[indexOfDate].avListOfProject.forEach(function(item) {
       staffListChanged.push(item.idStaff);
@@ -103,28 +95,41 @@ router.get('/uploadStaffArrangement',function(req,res,next) {
     var staffListToDelete = staffListChanged.filter(function(item) {
       return staffListcommon.indexOf(item) === -1;
     });
-    console.log(staffListcommon);
-    console.log('ADD: ' + staffListToAdd);
-    console.log('DEL: ' + staffListToDelete);
     db.staffmodel.find({idStaff:staffListToAdd},function(err,documents) {
-      documents.forEach(function(item) {
-        item.statusOfStaff.push({
-          date:req.query.targetDate,
-          reason:document.nameOfProject
-        });
+      documents.forEach(function (item) { // for each staff to add arrangement
+        if (item.arrangementOfStaff.length == 0) { // if he dont have any arrangement
+          item.arrangementOfStaff.push({
+            projectId :document._id,
+            date: [targetDate.format()]
+          });
+        } else { // if he has arrangement: he should be check whether he has allready arranged in this project
+          item.arrangementOfStaff.forEach(function(itemJ) {
+            if (itemJ.projectId == document._id) { // if he has been arranged in this project, enlarge his date
+              itemJ.date.push(targetDate.format());
+            } else { // if he hasn't been arrangemented in this project, enlarge his arrangemnt list
+              item.arrangementOfStaff.push({ 
+                projectId:document._id,
+                date:[targetDate.format()]
+              })
+            }
+          })
+        }
         item.save();
       });
     });
     db.staffmodel.find({idStaff:staffListToDelete},function(err,documents) {
-      documents.forEach(function(itemStaff) {
-        var newStatus = itemStaff.statusOfStaff.filter(function(index){
-          return index.date !== req.query.targetDate;
-        })
-        console.log('itemStaff: ' + itemStaff);
-        console.log('newStatus: ' + newStatus);
-        itemStaff.statusOfStaff = newStatus;
-        itemStaff.save();
-      });
+      documents.forEach(function (item) {
+        var indexDeleteProject = null;
+        item.arrangementOfStaff.forEach(function(itemJ,index) {
+          var indexDelete = itemJ.date.indexOf(req.query.targetDate);
+          itemJ.date.splice(indexDelete,1);
+          if (itemJ.date.length == 0) { // if this date is the last day in arrangement of this staff
+            indexDeleteProject = index;
+          }
+        });
+        item.arrangementOfStaff.splice(indexDeleteProject,1);
+        item.save();
+      })
     });
   });
   res.json({SUCCESS:1});

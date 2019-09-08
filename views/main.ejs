@@ -87,6 +87,7 @@
 </div>
 <script src="/layui_dist/layui.js"></script>
 <script src="/echarts_dist/echarts.js"></script>
+<script src="/moment/moment.js"></script>
 <script>
 //Layui组件渲染代码区域
 layui.use(['laydate','jquery'],function(){
@@ -100,7 +101,7 @@ layui.use(['laydate','jquery'],function(){
       $.ajax({
         url:'/stastics/statusInDay',
         type:'get',
-        data:{date:value},
+        data:{date:moment(value).format()},
         dataType:'json',
         success:function(data){
             option.dataset.source = data;

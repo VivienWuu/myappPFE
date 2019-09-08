@@ -60,6 +60,7 @@
       </div>
     </script> 
     <script type="text/html" id="barProjectTable">
+      <a class="layui-btn layui-btn-xs" lay-event="editHour">查看并编辑计划工时</a>
       <a class="layui-btn layui-btn-xs" lay-event="editProject">编辑项目</a>
       <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delProject">删除项目</a>
     </script>
@@ -81,13 +82,6 @@ layui.use('table', function(){
     // ,height: 500  默认铺满
     ,url: '/project/getAllProject' //数据接口
     ,parseData: function(res){ //res 即为原始返回的数据
-      for (var i=0;i<res.length;i++) {
-        res[i]['hourAV'] = res[i].hourOfProject[0];
-        res[i]['hourCBME'] = res[i].hourOfProject[1];
-        res[i]['hourCLSTR'] = res[i].hourOfProject[2];
-        res[i]['totalHour'] = res[i].hourOfProject[0] + res[i].hourOfProject[1] + res[i].hourOfProject[2];
-        res[i].hourOfProject = null;
-      }
       return {
         "code": 0, //解析接口状态
         "msg": " ", //解析提示文本
@@ -103,10 +97,6 @@ layui.use('table', function(){
       ,{field: 'nameOfProject', title: '项目名称', sort: true}
       ,{field: 'startdateOfProject', title: '项目开始日期'}
       ,{field: 'enddateOfProject', title: '项目结束日期'}
-      ,{field: 'hourAV', title: 'AV所需工时'}
-      ,{field: 'hourCBME', title: 'CB/ME所需工时'} 
-      ,{field: 'hourCLSTR', title: 'CL/STR所需工时'}
-      ,{field: 'totalHour', title: '总工时'}
       ,{title:'操作',toolbar:'#barProjectTable'}
     ]]
   });
@@ -132,11 +122,7 @@ layui.use('table', function(){
                 history.go(0);
               });
             } else {
-              layer.msg('添加失败！',{
-                time: 2000
-              },function(){
-                history.go(0);
-              });       
+              layer.msg('添加失败！');       
             }
           }      
         });
@@ -146,20 +132,27 @@ layui.use('table', function(){
   table.on('tool(projectTable)', function(obj){
     layui.data('openedProject',{key:"_id",value:obj.data._id});
     layui.data('openedProject',{key:"nameOfProject",value:obj.data.nameOfProject});
-    layui.data('openedProject',{key:"hourAV",value:obj.data.hourAV});
-    layui.data('openedProject',{key:"hourCBME",value:obj.data.hourCBME});
-    layui.data('openedProject',{key:"hourCLSTR",value:obj.data.hourCLSTR});
     layui.data('openedProject',{key:"startdateOfProject",value:obj.data.startdateOfProject});
     layui.data('openedProject',{key:"enddateOfProject",value:obj.data.enddateOfProject});
     switch(obj.event){
+      case "editHour":
+        layer.open({
+          type:2,
+          title:'确认计划工时',
+          area:['1500px','510px'],
+          content:"/IframeChangeHour",
+          end: function () {
+            
+          }
+        })
+      break;
       case "editProject":
         layer.open({
           type:2
           ,title: "编辑一份项目"
-          ,area: ['740px', '560px']
+          ,area: ['700px', '500px']
           ,content: "/IframeChangeProject"
           ,end: function(){
-            layui.data('openedProject',null);
             var resFromIframe = layui.data('res');
             layui.data('res',null);
             if (resFromIframe.SUCCESS == 1){
@@ -184,6 +177,10 @@ layui.use('table', function(){
             data: {_id:obj.data._id},
             dataType: "json",
             success: function (res) {
+              var projectToArrange = layui.sessionData('projectToArrange');
+              if (obj.data._id == projectToArrange._id) {
+                layui.sessionData('projectToArrange',null);
+              }
               if (res.SUCCESS == 1) {
                 obj.del();
                 layer.msg("删除成功",{

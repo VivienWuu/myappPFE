@@ -25,7 +25,6 @@ router.get('/addOneStaff',function(req,res,next) {
     if (result) {
       res.json({SUCCESS:0});
     } else {
-      req.query["statusOfStaff"] = [];
       var newStaff = db.staffmodel(req.query);
       newStaff.save(function(err) {
         if (err) return console.error(err);
@@ -53,47 +52,41 @@ router.get('/changeStaffValue',function(req,res,next) {
 // RES : JSON {SUCCESS:1/0/-1} add a special status or change status fail or delete a special status
 router.get('/changeStaffStatus',function(req,res,next) {
   db.staffmodel.findOne({idStaff:req.query.idStaff},function(err,result) {
-    console.log(req.query.date);
-    console.log(result.statusOfStaff);
-    if (result && result.statusOfStaff !=[] && req.query.reason == "在岗") { 
-      var indexList = -1;
-      for (i=0;i<result.statusOfStaff.length;i++) {
-        var dateFromWeb = req.query.date;
-        var dateFromDatabase = result.statusOfStaff[i].date;
-        if(dateFromWeb == dateFromDatabase){
-          indexList = i;
-          result.statusOfStaff.splice(indexList,1);
-          break;
-        }
-      }
-      result.save();
-      res.json({SUCCESS:-1});
-    }else if (result && result.statusOfStaff ==[] && req.query.reason == "在岗") {
+    if (result && result.statusOfStaff ==[] && req.query.reason == "在岗") {
       res.json({SUCCESS:0});
-    }else if (result && result.statusOfStaff ==[] && req.query.reason != "在岗") {
+    } else if (result && result.statusOfStaff ==[] && req.query.reason != "在岗") {
       result.statusOfStaff.push({date:req.query.date,reason:req.query.reason});
       result.save();
       res.json({SUCCESS:1});
-    }else if (result && result.statusOfStaff !=[] && req.query.reason != "在岗") {
+    } else if (result && result.statusOfStaff !=[] && req.query.reason == "在岗") {
+      result.statusOfStaff.forEach(function(item,index) {
+        var dateFromWeb = req.query.date;
+        var dateFromDatabase = item.date;
+        if(dateFromWeb == dateFromDatabase){
+          result.statusOfStaff.splice(index,1);
+        }
+      }); 
+      result.save();
+      res.json({SUCCESS:-1});
+    } else if (result && result.statusOfStaff !=[] && req.query.reason != "在岗") {
       var indexList = -1;
-      for (i=0;i<result.statusOfStaff.length;i++) {
+      result.statusOfStaff.forEach(function (item,index) {
         var DateFromWeb = req.query.date;
-        var dateFromDatabase = result.statusOfStaff[i].date;
+        var dateFromDatabase = item.date;
         if(DateFromWeb == dateFromDatabase){
           indexList = i;
-          result.statusOfStaff.splice(indexList,1);
-          result.statusOfStaff.push({date:req.query.date,reason:req.query.reason});
-          break;
+          result.statusOfStaff.splice(index,1);
+          result.statusOfStaff.push({date:item.date,reason:item.reason});
         }
-      }
+      });
       if (indexList == -1) {
         result.statusOfStaff.push({date:req.query.date,reason:req.query.reason});
       }
       result.save();
       res.json({SUCCESS:1});
-    }else {
+    } else {
       res.json({SUCCESS:0});
-    }
+    }    
   });
 });
 
@@ -119,7 +112,43 @@ router.get('/searchStaffStatus',function(req,res,next) {
 // RES : JSON {SUCCESS:1/0} delete success or fail
 router.get('/deleteOneStaff',function(req,res,next) {
   db.staffmodel.findOneAndDelete({idStaff:req.query.idStaff},function(err,result) {
+    // result is the object you want to delete
+    console.log(result);
     if (result) {
+      result.arrangementOfStaff.forEach(function (item) {
+        db.projectmodel.findById(item.projectId,function(err,document) {
+          document.arrangementOfProject.forEach(function (itemJ) {
+            var indexToDelete = null;
+            itemJ['avListOfProject'].forEach(function (itemK,index) {
+              if (itemK.idStaff == result.idStaff) {
+                indexToDelete = index;
+              }
+            });
+            if (indexToDelete != null) {
+              itemJ['avListOfProject'].splice(indexToDelete,1);
+            }
+            var indexToDelete = null;
+            itemJ['cbmeListOfProject'].forEach(function (itemK,index) {
+              if (itemK.idStaff == result.idStaff) {
+                indexToDelete = index;
+              }
+            });
+            if (indexToDelete != null) {
+              itemJ['cbmeListOfProject'].splice(indexToDelete,1);
+            }
+            var indexToDelete = null;
+            itemJ['clstrListOfProject'].forEach(function (itemK,index) {
+              if (itemK.idStaff == result.idStaff) {
+                indexToDelete = index;
+              }
+            });
+            if (indexToDelete != null ) {
+              itemJ['clstrListOfProject'].splice(indexToDelete,1);
+            }
+          });
+          document.save();
+        })
+      });
       res.json({SUCCESS:1});
     } else {
       res.json({SUCCESS:0});
@@ -134,25 +163,26 @@ router.get('/deleteOneStaff',function(req,res,next) {
 function format(docsInDB,targetDate) { 
   var docsInWeb = [];
   if (docsInDB.length) {
-    for (var i=0;i<docsInDB.length;i++) {
-      var objectStaff =  {
-        idStaff : docsInDB[i].idStaff,
-        nameOfStaff : docsInDB[i].nameOfStaff,
-        postOfStaff : docsInDB[i].postOfStaff,
-        groupOfStaff : docsInDB[i].groupOfStaff,
-        majorOfStaff : docsInDB[i].majorOfStaff,
-        statusOfStaff:'在岗'
-      }
-      if (docsInDB[i].statusOfStaff.length) {
-        for (j=0;j<docsInDB[i].statusOfStaff.length;j++) {
-          if (targetDate == docsInDB[i].statusOfStaff[j].date) {
-            objectStaff.statusOfStaff = docsInDB[i].statusOfStaff[j].reason;
-            break;
-          }
+    docsInDB.forEach(function(item) {
+        var objectStaff =  {
+          _id : item._id,
+          idStaff : item.idStaff,
+          nameOfStaff : item.nameOfStaff,
+          postOfStaff : item.postOfStaff,
+          groupOfStaff : item.groupOfStaff,
+          majorOfStaff : item.majorOfStaff,
+          hourOfStaff : item.hourOfStaff,
+          statusOfStaff:'在岗'
         }
-      }
-      docsInWeb.push(objectStaff);
-    }
+        if (item.statusOfStaff.length) {
+          item.statusOfStaff.forEach(function (statusItem) {
+            if (targetDate == statusItem.date) {
+              objectStaff.statusOfStaff = statusItem.reason;
+            }
+          });
+        }
+        docsInWeb.push(objectStaff);
+    });
   }
   return docsInWeb;
 }

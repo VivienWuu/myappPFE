@@ -75,6 +75,7 @@ layui.use(['laydate','form','jquery'],function(){
     data: {idStaff:openedStaff.idStaff},
     dataType: "json",
     success: function (res) {
+      console.log(res);
       for(i=0;i<res.length;i++){
         var dateinLaydate = moment(res[i].date).format('YYYY-M-D');
         staffStatus[dateinLaydate] = res[i].reason;

@@ -11,171 +11,170 @@
 <body>
 <div class="layui-layout layui-layout-admin">
   <div class="layui-header">
-      <a href="/"><div class="layui-logo"><%= title %></div></a>
-      <!-- 头部区域（可配合layui已有的水平导航） -->
-      <ul class="layui-nav layui-layout-right">
-        <li class="layui-nav-item">
-          <a href="javascript:;">
-            <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-            贤心
-          </a>
+    <a href="/"><div class="layui-logo"><%= title %></div></a>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+          贤心
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="">基本资料</a></dd>
+          <dd><a href="">安全设置</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="">退了</a></li>
+    </ul>
+  </div>
+    
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">人力资源管理</a>
           <dl class="layui-nav-child">
-            <dd><a href="">基本资料</a></dd>
-            <dd><a href="">安全设置</a></dd>
+            <dd><a href="/humanresource">人员列表</a></dd>
+            <dd><a href="/project">项目列表</a></dd>
+            <dd><a href="/arrangement">人力安排</a></dd>
+            <dd><a href="/hrChart">计划总览</a></dd>
           </dl>
         </li>
-        <li class="layui-nav-item"><a href="">退了</a></li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">工时统计</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;">子列表占位符一</a></dd>
+            <dd><a href="javascript:;">子列表占位符二</a></dd>
+          </dl>
+        </li>
       </ul>
     </div>
-    
-    <div class="layui-side layui-bg-black">
-      <div class="layui-side-scroll">
-      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-        <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-          <li class="layui-nav-item layui-nav-itemed">
-            <a class="" href="javascript:;">人力资源管理</a>
-            <dl class="layui-nav-child">
-              <dd><a href="/humanresource">人员列表</a></dd>
-              <dd><a href="/project">项目列表</a></dd>
-              <dd><a href="/arrangement">人力安排</a></dd>
-              <dd><a href="/hrChart">计划总览</a></dd>
-            </dl>
-          </li>
-          <li class="layui-nav-item">
-            <a href="javascript:;">工时统计</a>
-            <dl class="layui-nav-child">
-              <dd><a href="javascript:;">子列表占位符一</a></dd>
-              <dd><a href="javascript:;">子列表占位符二</a></dd>
-            </dl>
-          </li>
-        </ul>
-      </div>
-    </div>
+  </div>
    
-    <div class="layui-body">
+  <div class="layui-body">
     <!-- 内容主体区域 -->
-      <div class="indexBackground layui-col-space10">
-        <div class="layui-col-md3">
-          <div class="layui-card">
-            <div class="layui-card-header"><button id="arrangeSubmit" class="layui-btn layui-btn-sm">提交</button></div>
-            <div class="layui-card-body">
-              <table class="layui-table">
-                <thead>
-                  <tr>
-                    <th>项目名称</th>
-                    <th>起始日期</th>
-                    <th>结束日期</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td id="nameOfProject"></td>
-                    <td id="startdateOfProject"></td>
-                    <td id="enddateOfProject"></td>
-                  </tr>
-                </tbody>
-              </table>
-              <div class="layui-box" id="dateChoose"></div>
-            </div>
+    <div class="indexBackground layui-col-space10">
+      <div class="layui-col-md3">
+        <div class="layui-card">
+          <div class="layui-card-header"><button id="arrangeSubmit" class="layui-btn layui-btn-sm">提交</button></div>
+          <div class="layui-card-body">
+            <table class="layui-table">
+              <thead>
+                <tr>
+                  <th>项目名称</th>
+                  <th>起始日期</th>
+                  <th>结束日期</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td id="nameOfProject"></td>
+                  <td id="startdateOfProject"></td>
+                  <td id="enddateOfProject"></td>
+                </tr>
+               </tbody>
+            </table>
+            <div class="layui-box" id="dateChoose"></div>
           </div>
         </div>
-        <div class="tableSortable layui-col-md9">
-          <div class="layui-col-md3">
-            <div class="theadBox">
-              <table class="layui-table">
-                <thead>
-                  <tr><th colspan="3">可用人员</th></tr>
-                  <tr>
-                    <th>职编</th>
-                    <th>姓名</th>
-                    <th>组别</th>
-                  </tr>
-                </thead>
-              </table>
-            </div>
-            <div class="tbodyBox">
-              <table class="layui-table" id="staffAvailbleTable">
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-          <div class="layui-col-md3">
-              <div class="theadBox">
-                <table class="layui-table">
-                  <thead>
-                    <tr><th colspan="3">AV</th></tr>
-                    <tr>
-                      <th>职编</th>
-                      <th>姓名</th>
-                      <th>组别</th>
-                    </tr>
-                  </thead>
-                </table>
-              </div>
-              <div class="tbodyBox">
-                <table class="layui-table" id="staffAVTable">
-                  <tbody></tbody>
-                </table>
-              </div>
-          </div>
-          <div class="layui-col-md3">
-              <div class="theadBox">
-                <table class="layui-table">
-                  <thead>
-                    <tr><th colspan="3">CB/ME</th></tr>
-                    <tr>
-                      <th>职编</th>
-                      <th>姓名</th>
-                      <th>组别</th>
-                    </tr>
-                  </thead>
-                </table>
-              </div>
-              <div class="tbodyBox">
-                <table class="layui-table" id="staffCBMETable">
-                  <tbody></tbody>
-                </table>
-              </div>
-          </div>
-          <div class="layui-col-md3">
-              <div class="theadBox">
-                <table class="layui-table">
-                  <thead>
-                    <tr><th colspan="3">CL/STR</th></tr>
-                    <tr>
-                      <th>职编</th>
-                      <th>姓名</th>
-                      <th>组别</th>
-                    </tr>
-                  </thead>
-                </table>
-              </div>
-              <div class="tbodyBox">
-                <table class="layui-table" id="staffCLSTRTable">
-                  <tbody></tbody>
-                </table>
-              </div>
-          </div>
-        </div> 
       </div>
-    </div>
-    <div class="layui-footer">
-      <!-- 底部固定区域 -->
-      © layui.com - 底部固定区域
+      <div class="tableSortable layui-col-md9">
+        <div class="layui-col-md3">
+          <div class="theadBox">
+            <table class="layui-table">
+              <thead>
+                <tr><th colspan="3">可用人员</th></tr>
+                <tr>
+                  <th width="33%">姓名</th><th width="33%">组别</th><th width="33%">工时系数</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+          <div class="tbodyBox">
+            <table class="layui-table" id="staffAvailableTable">
+              <tbody id="availableList"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="layui-col-md3">
+          <div class="theadBox">
+            <table class="layui-table">
+              <thead>
+                <tr><th colspan="3">AV</th></tr>
+                <tr>
+                  <th width="33%">姓名</th><th width="33%">组别</th><th width="33%">工时系数</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+          <div class="tbodyBox">
+            <table class="layui-table" id="staffAVTable">
+              <tbody id="avList"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="layui-col-md3">
+          <div class="theadBox">
+            <table class="layui-table">
+              <thead>
+                <tr><th colspan="3">CB/ME</th></tr>
+                <tr>
+                  <th width="33%">姓名</th><th width="33%">组别</th><th width="33%">工时系数</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+          <div class="tbodyBox">
+            <table class="layui-table" id="staffCBMETable">
+              <tbody id="cbmeList"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="layui-col-md3">
+          <div class="theadBox">
+            <table class="layui-table">
+              <thead>
+                <tr><th colspan="3">CL/STR</th></tr>
+                  <tr>
+                    <th width="33%">姓名</th><th width="33%">组别</th><th width="33%">工时系数</th>
+                  </tr>
+              </thead>
+            </table>
+          </div>
+          <div class="tbodyBox">
+            <table class="layui-table" id="staffCLSTRTable">
+              <tbody id="clstrList"></tbody>
+            </table>
+          </div>
+        </div>
+      </div> 
     </div>
   </div>
+  <div class="layui-footer">
+    <!-- 底部固定区域 -->
+    © layui.com - 底部固定区域
+  </div>
+</div>
 <script src="Sortablejs/Sortable.js"></script>
 <script src="/moment/moment.js"></script>
 <script src="/layui_dist/layui.js"></script>
 <script>
-var isTableChange = 0;
 var _id = "";
 var targetDate ="";
+var fourlistInWeb = {
+  isListChange:0,
+  tbodyName : ["availableTbody","avTbody","cbmeTbody","clstrTbody"],
+  availableList:[],
+  avList:[],
+  cbmeList:[],
+  clstrList:[]
+}
 layui.use(['table','laydate'],function(){
   var $ = layui.$;
   var laydate = layui.laydate;
   var table = layui.table;
-  
+  var targetDate = "";
   // get project's id user selected
   var projectToArrange = layui.sessionData("projectToArrange");
   if (JSON.stringify(projectToArrange) == "{}") {
@@ -196,7 +195,7 @@ layui.use(['table','laydate'],function(){
         
         _id = res._id;
         targetDate = moment(res.startdateOfProject).format();
-        downArrangement(res._id,targetDate)
+        downArrangement(res._id,targetDate);
         laydate.render({
           elem:"#dateChoose",
           position:'static',
@@ -205,13 +204,15 @@ layui.use(['table','laydate'],function(){
           max:res.enddateOfProject,
           showBottom:false,
           done: function(value) {
-            var targetDate = moment(value).format();
-            if (isTableChange == 1) {
+            targetDate = moment(value).format();
+            if (fourlistInWeb.isListChange == 1) {
+              console.log(fourlistInWeb);
               layer.alert('您尚未提交，是否确认切换',function(index) {
                 downArrangement(res._id,targetDate);
                 layer.close(index);
               });
             } else  {
+              console.log(fourlistInWeb);
               downArrangement(res._id,targetDate);
             }
           }
@@ -222,73 +223,82 @@ layui.use(['table','laydate'],function(){
 
   // initiate sortable 
   var fourTbody = [
-    $('#staffAvailbleTable tbody'),
-    $('#staffAVTable tbody'),
-    $('#staffCBMETable tbody'),
-    $('#staffCLSTRTable tbody')
+    $('#availableList'),
+    $('#avList'),
+    $('#cbmeList'),
+    $('#clstrList')
   ]
-  for(var i=0;i<fourTbody.length;i++) {
-   new Sortable(fourTbody[i][0],{
-    group:'arrangeTable',
-    multiDrag:true,
-    selectedClass:'selected',
-    animation:250,
-    onAdd: function (evt) {
-      isTableChange = 1;
-    }
-   }); 
-  }
+  fourTbody.forEach(function (item,index){
 
-  // test code (need to delete)
+    new Sortable(item[0],{
+      group:'arrangeTable',
+      multiDrag:true,
+      selectedClass:'selected',
+      animation:350,
+      onAdd: function (evt) {
+        fourlistInWeb.isListChange = 1;
+        if (evt.items.length == 0) {
+          moveItemInList([evt.item],evt.to.id,evt.from.id);
+        } else {
+          moveItemInList(evt.items,evt.to.id,evt.from.id);
+        }
+      }
+    });
+  });
+
   $('#arrangeSubmit').click(function(){
     layer.alert('是否确定提交项目安排？',function(index) {
       upArrangement(_id,targetDate);
       layer.close(index);
-    })
+    });
   });
 });
 
-// catch data from each table
-function sortableTableWebToServer(trID) {
-  var trList = layui.$(trID);
-  var tbodyJson = [];
-  if (trList != null) {
-    for (var i=0;i<trList.length;i++) { 
-      tbodyJson.push({
-        idStaff:trList[i].children[0].innerText,
-        nameOfStaff:trList[i].children[1].innerText,
-        groupOfStaff:trList[i].children[2].innerText
-      });
+// move item from one list to another
+
+function moveItemInList (ids,to,from) {
+  // ids: list 
+  ids.forEach(function (iditem,i) {
+    var targetIndex =null;
+    fourlistInWeb[from].forEach(function (listitem,j){
+      if (iditem.id == listitem.idStaff) {
+        console.log(iditem.id,listitem.idStaff);
+        targetIndex = j;
+      }
+    }); 
+    if (targetIndex != null) {
+      fourlistInWeb[to].push(fourlistInWeb[from][targetIndex]);
+      fourlistInWeb[from].splice(targetIndex,1);
     }
-  }
-  return tbodyJson;
+  });
 }
+
 // render list to tbody
 function sortableTableServerToWeb (tbodyJson,tbodyID) {
   layui.$(tbodyID).empty();
-  if (tbodyJson.length != 0) {
-    for (var i=0;i<tbodyJson.length;i++) {
-      layui.$(tbodyID).append(
-        '<tr><td style="width:33%">' + tbodyJson[i].idStaff + '</td><td style="width:33%">' + tbodyJson[i].nameOfStaff + '</td><td style="width:33%">' + tbodyJson[i].groupOfStaff + '</td></tr>'
-      );
-    }
-  }
+  tbodyJson.forEach(function(item) {
+    layui.$(tbodyID).append(
+      "<tr id=" + item.idStaff + "><td style='width:33%'>" + item.nameOfStaff + "</td><td style='width:33%'>" + item.groupOfStaff + "</td><td style='width:33%'>" + item.hourOfStaff + "</td></tr>"
+    );
+  });
 }
 
 // ajax download arrangement
 function downArrangement (_id,targetDate) {
-  var url = '/arrangement/downloadStaffAvailble';
+  var url = '/arrangement/downloadStaffAvailable';
   layui.$.ajax({
     type: "get",
     url: url,
     data: {_id:_id,targetDate:targetDate},
     dataType: "json",
     success: function (res) {
-    sortableTableServerToWeb(res.staffAvailbleList,'#staffAvailbleTable tbody');
-    sortableTableServerToWeb(res.threeGroupList[0],'#staffAVTable tbody');
-    sortableTableServerToWeb(res.threeGroupList[1],'#staffCBMETable tbody');
-    sortableTableServerToWeb(res.threeGroupList[2],'#staffCLSTRTable tbody');
-    isTableChange = 0;
+      sortableTableServerToWeb(res.staffAvailableList,'#staffAvailableTable tbody');
+      sortableTableServerToWeb(res.threeGroupList[0],'#staffAVTable tbody');
+      sortableTableServerToWeb(res.threeGroupList[1],'#staffCBMETable tbody');
+      sortableTableServerToWeb(res.threeGroupList[2],'#staffCLSTRTable tbody');
+      fourlistInWeb.isListChange = 0;
+      fourlistInWeb.availableList = res.staffAvailableList;
+      [fourlistInWeb["avList"],fourlistInWeb["avList"],fourlistInWeb["avList"]] = res.threeGroupList;
     }
   });
 }
@@ -297,9 +307,10 @@ function downArrangement (_id,targetDate) {
 function upArrangement (_id,targetDate) {
   var url = "/arrangement/uploadStaffArrangement";
   var arrangementToUpload = {
-    avListOfProject:sortableTableWebToServer('#staffAVTable tr'),
-    cbmeListOfProject:sortableTableWebToServer('#staffCBMETable tr'),
-    clstrListOfProject: sortableTableWebToServer('#staffCLSTRTable tr')
+    plugin:"Added in case of null object",
+    avListOfProject:fourlistInWeb.avList,
+    cbmeListOfProject:fourlistInWeb.cbmeList,
+    clstrListOfProject: fourlistInWeb.clstrList
   }
   layui.$.ajax({
     type: "get",
@@ -309,7 +320,7 @@ function upArrangement (_id,targetDate) {
     dataType: "json",
     success: function (res) {
       if (res.SUCCESS == 1) {
-        isTableChange = 0;
+        fourlistInWeb.isListChange = 0;
       }
     }
   });
