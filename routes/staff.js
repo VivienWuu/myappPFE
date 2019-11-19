@@ -1,4 +1,4 @@
-// ROUTER : hr.ejs
+// 人员列表界面
 var express = require("express");
 var router = express.Router();
 var db = require("../database/models");
@@ -80,7 +80,7 @@ router.get('/changeStaffStatus',function(req,res,next) {
         }
       });
       if (indexList == -1) {
-        result.statusOfStaff.push({date:req.query.date,reason:req.query.reason});
+        result.statusOfStaff.push({date:req.query.date,reason:req.query.reason}); 
       }
       result.save();
       res.json({SUCCESS:1});

@@ -21,8 +21,17 @@ var projectSchema = new mongoose.Schema({
   arrangementOfProject:[{_id:false,avListOfProject:Array,cbmeListOfProject:Array,clstrListOfProject:Array}]
 },{versionKey:false});
 
+var jobcardSchema = new mongoose.Schema({
+  date:{type:String,required:true},
+  avJobcardNumber:{type:Number,required:true},
+  cbmeJobcardNumber:{type:Number,required:true},
+  clstrJobcardNumber:{type:Number,required:true}
+});
+
 var staffmodel = mongoose.model('staffmodel',staffSchema,'STAFF');
 var projectmodel = mongoose.model('projectmodel',projectSchema,'PROJECT');
+var jobcardmodel = mongoose.model('jobcardmodel',jobcardSchema,'JOBCARD');
 
 module.exports.staffmodel = staffmodel; 
 module.exports.projectmodel = projectmodel;
+module.exports.jobcardmodel = jobcardmodel;

@@ -1,11 +1,46 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>管理系统-登录</title>
+  <link rel="stylesheet" href="/layui_dist/css/layui.css">
+  <link rel="stylesheet" href="/stylesheets/bodystyle.css">
+  <script src="/layui_dist/layui.js"></script>
+</head>
+<body style="background-color:#EEEEEE">
+<div class="layui-container">
+  <div class="layui-container" style="text-align: left; color: rgb(1, 170, 237); font-size: 24px; padding-bottom: 20px; padding-top: 20px;">
+    OBV2管理系统
+  </div>
+  <form class="layui-form" action="/users/login" method="POST" >
+    <div class="layui-form-item">
+      <label class="layui-form-label layui-bg-white">用户名</label>
+      <div class="layui-input-block">
+        <input class="layui-input" type="text" autocomplete="off" name="username">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label layui-bg-white">密码</label>
+      <div class="layui-input-block">
+        <input class="layui-input" type="password" autocomplete="off" name="password">
+      </div>
+    </div>
+    <div class="layui-form-item" style="text-align: center;">
+      <input class="layui-btn" type='submit' value="登录"><a class="layui-btn layui-btn-warm">注册</a>
+    </div>
+  </form>
+</div>
+<script src="/layui_dist/layui.js"></script>
+<script src="/echarts_dist/echarts.js"></script>
+<script src="/echarts_dist/theme/dark.js"></script>
+<script src="/moment/moment.js"></script>
+<script>
+  layui.use(['element','form'], function(){
+    var element = layui.element;
+    var form = layui.form;
+    var $ = layui.$;
+  });
+</script> 
+</body>
 </html>

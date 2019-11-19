@@ -1,4 +1,4 @@
-// ROUTER：main.ejs
+// 首页统计界面
 var express = require("express");
 var router = express.Router();
 var moment = require('moment');

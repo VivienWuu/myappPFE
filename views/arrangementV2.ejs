@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/layui_dist/css/layui.css">
+  <link rel="stylesheet" href="/stylesheets/bodystyle.css">
+  <link rel="stylesheet" href="/stylesheets/arrangement.css">
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <a href="/main"><div class="layui-logo"><%= title %></div></a>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+          贤心
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="">基本资料</a></dd>
+          <dd><a href="">安全设置</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="">退了</a></li>
+    </ul>
+  </div>
+    
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+    <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">人力资源管理</a>
+          <dl class="layui-nav-child">
+            <dd><a href="/humanresource">人员列表</a></dd>
+            <dd><a href="/project">项目列表</a></dd>
+            <dd><a href="/arrangement">人力安排</a></dd>
+            
+          </dl>
+        </li>
+        <li class="layui-nav-item layui-nav-itemed">
+          <a href="javascript:;">工程数据统计</a>
+          <dl class="layui-nav-child">
+            <dd><a href="/jobcard">工卡统计</a></dd>
+            <dd><a href="javascript:;">子列表占位符二</a></dd>
+            <dd><a href="/hrChart">计划总览</a></dd>
+          </dl>
+        </li>
+      </ul>
+    </div>
+  </div>
+   
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <table id="arrangement-table" lay-filter="arrangement-table"></table>
+    <script type="text/html" id="editArrange">
+      <a class="layui-btn layui-btn-xs" lay-event="editArrange">编辑</a>
+    </script>
+    <script type="text/html" id="editTime">
+      选择月份：
+      <input type="text" id="monthChoose" class="layui-input-block">
+      <a class="layui-btn " lay-event="monthSearch">查找</a>
+      <p>通过点击单元格确认警告原因！</p>
+    </script>
+  </div>
+  <div class="layui-footer">
+    <!-- 底部固定区域 -->
+    © layui.com - 底部固定区域
+  </div>
+</div>
+<script src="Sortablejs/Sortable.js"></script>
+<script src="/moment/moment.js"></script>
+<script src="/layui_dist/layui.js"></script>
+
+<script type="text/html" id="cell1">
+  {{# if (d.d1 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d1.hour == 0 ) { }}
+  <span>{{ d.d1.hour }}</span>
+  {{# }else if(d.d1.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d1.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d1.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell2">
+  {{# if (d.d2 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d2.hour == 0 ) { }}
+  <span>{{ d.d2.hour }}</span>
+  {{# }else if(d.d2.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d2.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d2.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell3">
+  {{# if (d.d3 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d3.hour == 0 ) { }}
+  <span>{{ d.d3.hour }}</span>
+  {{# }else if(d.d3.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d3.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d3.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell4">
+  {{# if (d.d4 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d4.hour == 0 ) { }}
+  <span>{{ d.d4.hour }}</span>
+  {{# }else if(d.d4.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d4.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d4.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell5">
+  {{# if (d.d5 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d5.hour == 0 ) { }}
+  <span>{{ d.d5.hour }}</span>
+  {{# }else if(d.d5.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d5.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d5.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell6">
+  {{# if (d.d6 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d6.hour == 0 ) { }}
+  <span>{{ d.d6.hour }}</span>
+  {{# }else if(d.d6.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d6.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d6.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell7">
+  {{# if (d.d7 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d7.hour == 0 ) { }}
+  <span>{{ d.d7.hour }}</span>
+  {{# }else if(d.d7.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d7.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d7.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell8">
+  {{# if (d.d8 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d8.hour == 0 ) { }}
+  <span>{{ d.d8.hour }}</span>
+  {{# }else if(d.d8.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d8.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d8.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell9">
+  {{# if (d.d9 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d9.hour == 0 ) { }}
+  <span>{{ d.d9.hour }}</span>
+  {{# }else if(d.d9.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d9.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d9.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell10">
+  {{# if (d.d10 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d10.hour == 0 ) { }}
+  <span>{{ d.d10.hour }}</span>
+  {{# }else if(d.d10.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d10.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d10.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell11">
+  {{# if (d.d11 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d11.hour == 0 ) { }}
+  <span>{{ d.d11.hour }}</span>
+  {{# }else if(d.d11.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d11.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d11.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell12">
+  {{# if (d.d12 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d12.hour == 0 ) { }}
+  <span>{{ d.d12.hour }}</span>
+  {{# }else if(d.d12.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d12.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d12.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell13">
+  {{# if (d.d13 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d13.hour == 0 ) { }}
+  <span>{{ d.d13.hour }}</span>
+  {{# }else if(d.d13.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d13.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d13.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell14">
+  {{# if (d.d14 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d14.hour == 0 ) { }}
+  <span>{{ d.d14.hour }}</span>
+  {{# }else if(d.d14.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d14.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d14.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell15">
+  {{# if (d.d15 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d15.hour == 0 ) { }}
+  <span>{{ d.d15.hour }}</span>
+  {{# }else if(d.d15.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d15.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d15.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell16">
+  {{# if (d.d16 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d16.hour == 0 ) { }}
+  <span>{{ d.d16.hour }}</span>
+  {{# }else if(d.d16.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d16.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d16.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell17">
+  {{# if (d.d17 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d17.hour == 0 ) { }}
+  <span>{{ d.d17.hour }}</span>
+  {{# }else if(d.d17.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d17.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d17.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell18">
+  {{# if (d.d18 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d18.hour == 0 ) { }}
+  <span>{{ d.d18.hour }}</span>
+  {{# }else if(d.d18.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d18.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d18.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell19">
+  {{# if (d.d19 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d19.hour == 0 ) { }}
+  <span>{{ d.d19.hour }}</span>
+  {{# }else if(d.d19.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d19.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d19.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell20">
+  {{# if (d.d20 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d20.hour == 0 ) { }}
+  <span>{{ d.d20.hour }}</span>
+  {{# }else if(d.d20.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d20.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d20.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell21">
+  {{# if (d.d21 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d21.hour == 0 ) { }}
+  <span>{{ d.d21.hour }}</span>
+  {{# }else if(d.d21.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d21.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d21.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell22">
+  {{# if (d.d22 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d22.hour == 0 ) { }}
+  <span>{{ d.d22.hour }}</span>
+  {{# }else if(d.d22.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d22.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d22.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell23">
+  {{# if (d.d23 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d23.hour == 0 ) { }}
+  <span>{{ d.d23.hour }}</span>
+  {{# }else if(d.d23.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d23.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d23.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell24">
+  {{# if (d.d24 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d24.hour == 0 ) { }}
+  <span>{{ d.d24.hour }}</span>
+  {{# }else if(d.d24.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d24.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d24.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell25">
+  {{# if (d.d25 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d25.hour == 0 ) { }}
+  <span>{{ d.d25.hour }}</span>
+  {{# }else if(d.d25.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d25.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d25.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell26">
+  {{# if (d.d26 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d26.hour == 0 ) { }}
+  <span>{{ d.d26.hour }}</span>
+  {{# }else if(d.d26.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d26.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d26.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell27">
+  {{# if (d.d27 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d27.hour == 0 ) { }}
+  <span>{{ d.d27.hour }}</span>
+  {{# }else if(d.d27.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d27.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d27.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell28">
+  {{# if (d.d28 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d28.hour == 0 ) { }}
+  <span>{{ d.d28.hour }}</span>
+  {{# }else if(d.d28.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d28.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d28.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell29">
+  {{# if (d.d29 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d29.hour == 0 ) { }}
+  <span>{{ d.d29.hour }}</span>
+  {{# }else if(d.d29.warning === 1 ){ }}
+  <span style="background-color: #FFB800;">{{ d.d29.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d29.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell30">
+  {{# if (d.d30 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d30.hour == 0 ) { }}
+  <span>{{ d.d30.hour }}</span>
+  {{# }else if(d.d30.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d30.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d30.hour }}</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="cell31">
+  {{# if (d.d31 == undefined ) { }}
+  <span style="background-color: #c2c2c2;"> X </span>
+  {{# }else if(d.d31.hour == 0 ) { }}
+  <span>{{ d.d31.hour }}</span>
+  {{# }else if(d.d31.warning === 1){ }}
+  <span style="background-color: #FFB800;">{{ d.d31.hour }}</span>
+  {{#  } else { }}
+  <span style="background-color: #5FB878;">{{ d.d31.hour }}</span>
+  {{#  } }}
+</script>
+<script>
+layui.use(['element','table','laydate'], function(){
+  var element = layui.element;
+  var table = layui.table;
+  var laydate = layui.laydate;
+  var $ = layui.$;
+  var warningMatrix = new Array(); // 冲突矩阵
+  var showWarning = function (_idIndex,dateIndex) { // 单元格事件: 显示错误类型
+    var reason = warningMatrix[_idIndex][dateIndex].reason;
+    var name = warningMatrix[_idIndex][dateIndex].warningName;
+    var reasonName = []; 
+    if (reason.illegalArrange == 1 ) {
+      reasonName.push('人员安排冲突');
+    }
+    if (reason.illegalTime == 1 ) {
+      reasonName.push('超出计划工时');
+    }
+    if (name.length != 0) {
+      var alertString = '<strong>今日人员</strong>：' + name.toString() + '<br>';
+      if (reasonName.length != 0) {
+        alertString = alertString + '<strong>冲突原因</strong>：' + reasonName.toString();
+      }
+      layer.alert(alertString, {
+        title:'每日人员'
+      });
+    }
+  }
+  var tableOption = {
+    elem:'#arrangement-table',
+    cols:[[
+      {field:'_id',title:'项目编号',hide:true},
+      {field:'nameOfProject',title:'项目名称',width:130,fixed:'left'},
+      {fixed: 'left', title:'操作', toolbar: '#editArrange',width:70},
+      {field:'d1',title:'1',width:'2.8%',templet: '#cell1',event:'showWarning1',style:'cursor: pointer;'},
+      {field:'d2',title:'2',width:'2.8%',templet: '#cell2',event:'showWarning2',style:'cursor: pointer;'},
+      {field:'d3',title:'3',width:'2.8%',templet: '#cell3',event:'showWarning3',style:'cursor: pointer;'},
+      {field:'d4',title:'4',width:'2.8%',templet: '#cell4',event:'showWarning4',style:'cursor: pointer;'},
+      {field:'d5',title:'5',width:'2.8%',templet: '#cell5',event:'showWarning5',style:'cursor: pointer;'},
+      {field:'d6',title:'6',width:'2.8%',templet: '#cell6',event:'showWarning6',style:'cursor: pointer;'},  
+      {field:'d7',title:'7',width:'2.8%',templet: '#cell7',event:'showWarning7',style:'cursor: pointer;'},
+      {field:'d8',title:'8',width:'2.8%',templet: '#cell8',event:'showWarning8',style:'cursor: pointer;'},
+      {field:'d9',title:'9',width:'2.8%',templet: '#cell9',event:'showWarning9',style:'cursor: pointer;'},
+      {field:'d10',title:'10',width:'2.8%',templet: '#cell10',event:'showWarning10',style:'cursor: pointer;'},
+      {field:'d11',title:'11',width:'2.8%',templet: '#cell11',event:'showWarning11',style:'cursor: pointer;'},
+      {field:'d12',title:'12',width:'2.8%',templet: '#cell12',event:'showWarning12',style:'cursor: pointer;'},
+      {field:'d13',title:'13',width:'2.8%',templet: '#cell13',event:'showWarning13',style:'cursor: pointer;'},
+      {field:'d14',title:'14',width:'2.8%',templet: '#cell14',event:'showWarning14',style:'cursor: pointer;'},
+      {field:'d15',title:'15',width:'2.8%',templet: '#cell15',event:'showWarning15',style:'cursor: pointer;'},
+      {field:'d16',title:'16',width:'2.8%',templet: '#cell16',event:'showWarning16',style:'cursor: pointer;'},
+      {field:'d17',title:'17',width:'2.8%',templet: '#cell17',event:'showWarning17',style:'cursor: pointer;'},
+      {field:'d18',title:'18',width:'2.8%',templet: '#cell18',event:'showWarning18',style:'cursor: pointer;'},
+      {field:'d19',title:'19',width:'2.8%',templet: '#cell19',event:'showWarning19',style:'cursor: pointer;'},
+      {field:'d20',title:'20',width:'2.8%',templet: '#cell20',event:'showWarning20',style:'cursor: pointer;'},
+      {field:'d21',title:'21',width:'2.8%',templet: '#cell21',event:'showWarning21',style:'cursor: pointer;'},
+      {field:'d22',title:'22',width:'2.8%',templet: '#cell22',event:'showWarning22',style:'cursor: pointer;'},
+      {field:'d23',title:'23',width:'2.8%',templet: '#cell23',event:'showWarning23',style:'cursor: pointer;'},
+      {field:'d24',title:'24',width:'2.8%',templet: '#cell24',event:'showWarning24',style:'cursor: pointer;'},
+      {field:'d25',title:'25',width:'2.8%',templet: '#cell25',event:'showWarning25',style:'cursor: pointer;'},
+      {field:'d26',title:'26',width:'2.8%',templet: '#cell26',event:'showWarning26',style:'cursor: pointer;'},
+      {field:'d27',title:'27',width:'2.8%',templet: '#cell27',event:'showWarning27',style:'cursor: pointer;'},
+      {field:'d28',title:'28',width:'2.8%',templet: '#cell28',event:'showWarning28',style:'cursor: pointer;'},
+      {field:'d29',title:'29',width:'2.8%',templet: '#cell29',event:'showWarning29',style:'cursor: pointer;'},
+      {field:'d30',title:'30',width:'2.8%',templet: '#cell30',event:'showWarning30',style:'cursor: pointer;'},
+      {field:'d31',title:'31',width:'2.8%',templet: '#cell31',event:'showWarning31',style:'cursor: pointer;'}
+    ]],
+    data: [],
+    toolbar:'#editTime'
+  }
+  var table1 = table.render(tableOption);
+  table.on('tool(arrangement-table)',function(obj){
+    if (obj.event == "editArrange") { // 行事件：编辑日期
+      layui.data('projectToArrange',{key:"dataInDay",value:obj.data});
+      
+      layer.open({
+        type:2,
+        title:'编辑项目安排',
+        area:['400px','700px'],
+        content:"/IframeEditArrange",
+        end: function() {
+          var resFromIframe = layui.data('res');
+          layui.data('res',null);
+          if(resFromIframe.SUCCESS){
+            layer.msg('编辑成功！',{
+              time: 2000 
+            },function () {
+              history.go(0);
+            });
+          }else {
+            layer.msg('编辑失败！',{
+              time: 2000
+            });
+          }
+        }
+      })
+    } else if (obj.event == 'showWarning1') {
+      showWarning(obj.data.hiddenIndex,0);
+    } else if (obj.event == 'showWarning2') {
+      showWarning(obj.data.hiddenIndex,1);
+    } else if (obj.event == 'showWarning3') {
+      showWarning(obj.data.hiddenIndex,2);
+    } else if (obj.event == 'showWarning4') {
+      showWarning(obj.data.hiddenIndex,3);
+    } else if (obj.event == 'showWarning5') {
+      showWarning(obj.data.hiddenIndex,4);
+    } else if (obj.event == 'showWarning6') {
+      showWarning(obj.data.hiddenIndex,5);
+    } else if (obj.event == 'showWarning7') {
+      showWarning(obj.data.hiddenIndex,6);
+    } else if (obj.event == 'showWarning8') {
+      showWarning(obj.data.hiddenIndex,7);
+    } else if (obj.event == 'showWarning9') {
+      showWarning(obj.data.hiddenIndex,8);
+    } else if (obj.event == 'showWarning10') {
+      showWarning(obj.data.hiddenIndex,9);
+    } else if (obj.event == 'showWarning11') {
+      showWarning(obj.data.hiddenIndex,10);
+    } else if (obj.event == 'showWarning12') {
+      showWarning(obj.data.hiddenIndex,11);
+    } else if (obj.event == 'showWarning13') {
+      showWarning(obj.data.hiddenIndex,12);
+    } else if (obj.event == 'showWarning14') {
+      showWarning(obj.data.hiddenIndex,13);
+    } else if (obj.event == 'showWarning15') {
+      showWarning(obj.data.hiddenIndex,14);
+    } else if (obj.event == 'showWarning16') {
+      showWarning(obj.data.hiddenIndex,15);
+    } else if (obj.event == 'showWarning17') {
+      showWarning(obj.data.hiddenIndex,16);
+    } else if (obj.event == 'showWarning18') {
+      showWarning(obj.data.hiddenIndex,17);
+    } else if (obj.event == 'showWarning19') {
+      showWarning(obj.data.hiddenIndex,18);
+    } else if (obj.event == 'showWarning20') {
+      showWarning(obj.data.hiddenIndex,19);
+    } else if (obj.event == 'showWarning21') {
+      showWarning(obj.data.hiddenIndex,20);
+    } else if (obj.event == 'showWarning22') {
+      showWarning(obj.data.hiddenIndex,21);
+    } else if (obj.event == 'showWarning23') {
+      showWarning(obj.data.hiddenIndex,22);
+    } else if (obj.event == 'showWarning24') {
+      showWarning(obj.data.hiddenIndex,23);
+    } else if (obj.event == 'showWarning25') {
+      showWarning(obj.data.hiddenIndex,24);
+    } else if (obj.event == 'showWarning26') {
+      showWarning(obj.data.hiddenIndex,25);
+    } else if (obj.event == 'showWarning27') {
+      showWarning(obj.data.hiddenIndex,26);
+    } else if (obj.event == 'showWarning28') {
+      showWarning(obj.data.hiddenIndex,27);
+    } else if (obj.event == 'showWarning29') {
+      showWarning(obj.data.hiddenIndex,28);
+    } else if (obj.event == 'showWarning30') {
+      showWarning(obj.data.hiddenIndex,29);
+    } else if (obj.event == 'showWarning31') {
+      showWarning(obj.data.hiddenIndex,30);
+    }
+  });
+  table.on('toolbar(arrangement-table)',function(obj) {
+    if (obj.event=="monthSearch") {
+      var date = $("#monthChoose").val();
+      $.ajax({
+        type: "get",
+        url: "/arrangement/getAllProjectInfo",
+        data: {date:date},
+        dataType: "json",
+        aysnc:false,
+        success: function (res) {
+          var availableList = [];
+          warningMatrix = new Array(res.listOfProject.length);
+          res.listOfProject.forEach(function(item,index) {  // 对满足条件的每一个项目进行数据格式化
+            // 获取目标月份的第一天和最后一天
+            var targetMonth = [date + '-01',""]; 
+            if (["1","3","5","7","8","10","12"].indexOf(date.substr(-2)) != -1) {
+              targetMonth[1] = date + "-31";
+            } else if (["4","6","9","11"].indexOf(date.substr(-2)) != -1) {
+              targetMonth[1] = date + "-30";
+            } else if (date.substr(0,4)%4 != 0 ) {
+              targetMonth[1] = date + "-28";
+            } else {
+              targetMonth[1] = date + "-29";
+            }
+            // 获取格式化中的开始日期与在目标月份中的持续天数
+            var timeinfo = {startdate:'',period:0,startIndex:0}; 
+            var differenceOfTwoPeriod = [
+              moment(item.startdateOfProject).diff(targetMonth[0],'days'), // 开始日期与目标月份第一天的差值，
+              moment(item.enddateOfProject).diff(targetMonth[1],'days') // 结束日期与月份最后一天的差值，
+            ];
+            if (differenceOfTwoPeriod[0]>=0 && differenceOfTwoPeriod[1]<=0) { // 项目起止日期在本月内
+              timeinfo.startdate = moment(item.startdateOfProject).format("D");
+              timeinfo.period = moment(item.enddateOfProject).diff(moment(item.startdateOfProject),'days') +1 ;
+            } else if (differenceOfTwoPeriod[0]>=0 && differenceOfTwoPeriod[1]>=0) { // 项目在当月开始，在下月结束
+              timeinfo.startdate = moment(item.startdateOfProject).format("D");
+              timeinfo.period = moment(targetMonth[1]).diff(moment(item.startdateOfProject),'days') + 1;
+            } else if (differenceOfTwoPeriod[0]<0 && differenceOfTwoPeriod[1]<=0) { // 项目在上月开始，在本月结束
+              timeinfo.startdate = moment(targetMonth[0]).format("D");
+              timeinfo.period = moment(item.enddateOfProject).diff(moment(targetMonth[0]),'days') + 1;
+              timeinfo.startIndex = -differenceOfTwoPeriod[0];
+            } else { // 项目在上月开始，在下月结束
+              timeinfo.startdate = moment(targetMonth[0]).format("D");
+              timeinfo.period = moment(targetMonth[1]).diff(moment(targetMonth[0]),'days') + 1;
+              timeinfo.startIndex = -differenceOfTwoPeriod[0];
+            }
+            // itemToPush：arrangeData中的一个元素
+            var itemToPush = {
+              hiddenIndex: index,
+              _id: item._id,
+              nameOfProject:item.nameOfProject,
+              timeinfo:timeinfo
+            }
+            // 判断持续时间内每日的总工时与获取warningMatrix
+            warningMatrix[index] = [];
+            for (var i=0;i<31;i++) {
+              warningMatrix[index].push({
+                warningStaff:[],
+                warningName:[],
+                reason: {
+                  illegalTime:0,
+                  illegalArrange:0
+                }
+              });
+            }
+            
+            for (var i=0;i<timeinfo.period;i++) {
+              // 获取当日该项目人员工时并将人员id写入warningMatrix
+              var totalHour = [0,0,0],isAbsent = 0;
+              item.arrangementOfProject[timeinfo.startIndex + i].avListOfProject.forEach(function (oneStaff) {
+                totalHour[0] = totalHour[0] + parseInt(oneStaff.hourOfStaff);
+                warningMatrix[index][parseInt(timeinfo.startdate)-1 + i].warningStaff.push(oneStaff.idStaff);
+                warningMatrix[index][parseInt(timeinfo.startdate)-1 + i].warningName.push(oneStaff.nameOfStaff);
+              });
+              if (totalHour[0] > item.hourOfProject[i].avHour) {
+                  warningMatrix[index][parseInt(timeinfo.startdate)-1 + i].reason.illegalTime = 1;
+                  isAbsent = 1;
+              }
+              item.arrangementOfProject[timeinfo.startIndex + i].cbmeListOfProject.forEach(function (oneStaff) {
+                totalHour[1] = totalHour[1] + parseInt(oneStaff.hourOfStaff);
+                warningMatrix[index][parseInt(timeinfo.startdate)-1 + i].warningStaff.push(oneStaff.idStaff);
+                warningMatrix[index][parseInt(timeinfo.startdate)-1 + i].warningName.push(oneStaff.nameOfStaff);
+              });
+              if (totalHour[1] > item.hourOfProject[i].cbmeHour) {
+                  warningMatrix[index][parseInt(timeinfo.startdate)-1 + i].reason.illegalTime = 1;
+                  isAbsent = 1;
+              }
+              item.arrangementOfProject[timeinfo.startIndex + i].clstrListOfProject.forEach(function (oneStaff) {
+                totalHour[2] = totalHour[2] + parseInt(oneStaff.hourOfStaff);
+                warningMatrix[index][parseInt(timeinfo.startdate)-1 + i].warningStaff.push(oneStaff.idStaff);
+                warningMatrix[index][parseInt(timeinfo.startdate)-1 + i].warningName.push(oneStaff.nameOfStaff);
+                // TODO : 对人员请假的判断 
+              });
+              if (totalHour[2] > item.hourOfProject[i].clstrHour ) {
+                  warningMatrix[index][parseInt(timeinfo.startdate)-1 + i].reason.illegalTime = 1;
+                  isAbsent = 1;
+              }
+              totalHour = totalHour[0] + totalHour[1] + totalHour[2];
+              itemToPush['d' + (parseInt(timeinfo.startdate) + i)] = {
+                arrange: item.arrangementOfProject[i].avListOfProject.concat(item.arrangementOfProject[i].cbmeListOfProject,item.arrangementOfProject[i].clstrListOfProject),
+                hour : totalHour,
+                warning: isAbsent
+              };
+            }
+            availableList.push(itemToPush);
+          });
+          console.log('warnningMatrix:');
+          console.log(warningMatrix);
+          // warningMatrix的逻辑判断
+          for (var i=0;i<31;i++) {
+          // 对于任意的一天，有所有的人员安排
+            var arrangementInDay = [];
+            for (var j=0;j<warningMatrix.length;j++) {
+              arrangementInDay = arrangementInDay.concat(warningMatrix[j][i].warningStaff);
+            }
+            var hashset = {};
+            for (var j=0;j<arrangementInDay.length;j++) {
+              if (hashset[arrangementInDay[j]] == null) {
+                hashset[arrangementInDay[j]] = 1;
+              } else { // 通过哈希表找出重复的元素
+                console.log(availableList);
+                for (var k=0;k<availableList.length;k++) {
+                  if (availableList[k]['d' + (i+1)] != undefined) {
+                    availableList[k]['d' + (i+1)].warning = 1;
+                    warningMatrix[k][i].reason.illegalArrange = 1;
+                  }
+                }
+                break;
+              }
+            }           
+          }
+          tableOption.data = availableList;
+          table1.reload(tableOption);
+          laydate.render({
+            elem:'#monthChoose',
+            type:'month',
+            value:date
+          });
+        }  
+      });  
+    }
+  });
+  laydate.render({
+    elem:'#monthChoose',
+    type:'month',
+    value:moment().format("YYYY-MM")
+  });
+});
+</script>
+</body>
+</html>

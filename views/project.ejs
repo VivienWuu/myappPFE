@@ -10,7 +10,7 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
   <div class="layui-header">
-    <a href="/"><div class="layui-logo"><%= title %></div></a>
+    <a href="/main"><div class="layui-logo"><%= title %></div></a>
     <!-- 头部区域（可配合layui已有的水平导航） -->
     <ul class="layui-nav layui-layout-right">
       <li class="layui-nav-item">
@@ -37,14 +37,14 @@
             <dd><a href="/humanresource">人员列表</a></dd>
             <dd><a href="/project">项目列表</a></dd>
             <dd><a href="/arrangement">人力安排</a></dd>
-            <dd><a href="/hrChart">计划总览</a></dd>
           </dl>
         </li>
-        <li class="layui-nav-item">
-          <a href="javascript:;">工时统计</a>
+        <li class="layui-nav-item layui-nav-itemed">
+          <a href="javascript:;">工程数据统计</a>
           <dl class="layui-nav-child">
-            <dd><a href="javascript:;">子列表占位符一</a></dd>
+            <dd><a href="/jobcard">工卡统计</a></dd>
             <dd><a href="javascript:;">子列表占位符二</a></dd>
+            <dd><a href="/hrChart">计划总览</a></dd>
           </dl>
         </li>
       </ul>
@@ -140,10 +140,7 @@ layui.use('table', function(){
           type:2,
           title:'确认计划工时',
           area:['1500px','510px'],
-          content:"/IframeChangeHour",
-          end: function () {
-            
-          }
+          content:"/IframeChangeHour"
         })
       break;
       case "editProject":

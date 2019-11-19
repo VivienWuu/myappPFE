@@ -1,4 +1,4 @@
-// ROUTER : project.ejs
+// 项目列表界面
 var express = require("express");
 var router = express.Router();
 

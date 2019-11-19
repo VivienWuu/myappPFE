@@ -2,6 +2,7 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var session = require('express-session');
 var logger = require('morgan');
 var bodyparser = require('body-parser'); // 用于处理HTML请求
 var indexRouter = require('./routes/index');
@@ -10,6 +11,7 @@ var staffRouter = require('./routes/staff');
 var stasticsRouter = require('./routes/stastics');
 var projectRouter = require('./routes/project');
 var arrangementRouter = require('./routes/arrangement');
+var jobcardRouter = require('./routes/jobcard');
 var app = express();
 
 // view engine setup
@@ -30,10 +32,20 @@ app.use('/staff', staffRouter);
 app.use('/stastics',stasticsRouter);
 app.use('/project', projectRouter);
 app.use('/arrangement',arrangementRouter);
+app.use('/jobcard',jobcardRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
+app.use(session({
+  secret:'loginfo',
+  resave:true,
+  saveUninitialized:false,
+  cookie:{
+    maxAge:1000 * 60 * 10
+  }
+}));
 
 // error handler
 app.use(function(err, req, res, next) {

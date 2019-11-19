@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/layui_dist/css/layui.css">
+  <link rel="stylesheet" href="/stylesheets/bodystyle.css">
+  <script src="/layui_dist/layui.js"></script>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <a href="/main"><div class="layui-logo"><%= title %></div></a>  
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+          贤心
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="">基本资料</a></dd>
+          <dd><a href="">安全设置</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="">退了</a></li>
+    </ul>
+  </div>
+  
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">人力资源管理</a>
+          <dl class="layui-nav-child">
+            <dd><a href="/humanresource">人员列表</a></dd>
+            <dd><a href="/project">项目列表</a></dd>
+            <dd><a href="/arrangement">人力安排</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item layui-nav-itemed">
+          <a href="javascript:;">工程数据统计</a>
+          <dl class="layui-nav-child">
+            <dd><a href="/jobcard">工卡统计</a></dd>
+            <dd><a href="javascript:;">子列表占位符二</a></dd>
+            <dd><a href="/hrChart">计划总览</a></dd>
+          </dl>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <form class="layui-form">
+      <div class="layui-form-item" style="font-size: 24px; color: rgb(30, 159, 255);">
+          <div class="layui-input-block" style="color: rgb(0, 150, 136); margin-top: 50px;">
+              根据日期添加每日工卡的完成数量
+          </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">日期</label>
+        <div class="layui-input-block">
+          <input id="dateChoose" name="jobcardDate" class="layui-input" style="width: 60%;" type="text" placeholder autocomplete="off" lay-verify="magicalCoderVerify" magicalcoder-verify value />
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">AV</label>
+          <div class="layui-input-inline">
+            <input name='avJobcardNumber' class="layui-input" type="number" autocomplete="off" >
+          </div>
+        </div>
+        <div class="layui-inline">
+          <label class="layui-form-label">CB/ME</label>
+          <div class="layui-input-inline">
+            <input name='cbmeJobcardNumber' class="layui-input" type="number" autocomplete="off" >
+          </div>
+        </div>
+        <div class="layui-inline">
+          <label class="layui-form-label">CL/STR</label>
+          <div class="layui-input-inline">
+            <input name='clstrJobcardNumber' class="layui-input" type="number" autocomplete="off" >
+          </div>
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <div class="layui-input-block">
+          <a class="layui-btn" lay-submit="submit" lay-filter="addform">提交</a>
+        </div>
+      </div>
+    </form>
+  </div>
+    
+  <div class="layui-footer">
+    <!-- 底部固定区域 -->
+    © layui.com - 底部固定区域
+  </div>
+</div>
+<script src="/layui_dist/layui.js"></script>
+<script src="/echarts_dist/echarts.js"></script>
+<script src="/echarts_dist/theme/dark.js"></script>
+<script src="/moment/moment.js"></script>
+<script>
+  layui.use(['element','laydate','form'], function(){
+    var element = layui.element;
+    var laydate = layui.laydate;
+    var form = layui.form;
+    var $ = layui.$;
+    laydate.render({
+      elem:"#dateChoose"
+    });
+    form.on('submit(addform)',function(data){
+      console.log(data.field);
+      $.ajax({
+        type: "get",
+        url: "/jobcard/addJobcardInDay",
+        data: data.field,
+        dataType: "json",
+        success: function (res) {
+          if (res.SUCCESS == 1) {
+            layer.msg('成功添加当日完成工卡数量');
+          } else {
+            layer.msg('成功修改当日完成工卡数');
+          }
+        }
+      });
+    })
+  });
+
+</script> 
+</body>
+</html>
+

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/layui_dist/css/layui.css">
+  <style>
+    #timeSlider {
+      margin-left:50px;
+      margin-right: 50px;
+    }
+  </style>
+</head>
+<body>
+  <form class="layui-form" action="">
+    <div class="layui-form-item">
+      <label class="layui-form-label" style="width: 300px;">请在选择日期时间段之后，进行人员配置</label>
+      <label class='layui-form-label'>时间选择：</label>
+    </div>
+    <div class="layui-form-item">
+      <div id="timeSlider"></div>
+    </div>
+    <div class="layui-form-item">
+      <div id="tableInDay" lay-filter="tableInDay"></div>
+      <script type="text/html" id="tableInDayPost">
+        <button class="layui-btn" lay-event="arrangePost">提交</button>
+      </script>
+    </div>
+  </form>
+  
+<script src="/layui_dist/layui.js"></script>
+<script src="/moment/moment.js"></script>
+<script>
+layui.use(['form','jquery','slider','table'],function(){
+  var thisIframe = parent.layer.getFrameIndex(window.name);
+  var form = layui.form;
+  var slider=layui.slider;
+  var table = layui.table;
+  var $ = layui.$;
+  var $$ = parent.layui.$;
+  
+  // 父子页面传参
+  var projectToArrange = layui.data('projectToArrange');
+  var timeChange = [0,0];// 选中的日期
+  slider.render({ // 时间选择滑块
+    elem:'#timeSlider',
+    range:true,// 时间段
+    min:0,
+    max:projectToArrange.dataInDay.timeinfo.period-1,
+    setTips: function (value) {
+      return parseInt(projectToArrange.dataInDay.timeinfo.startdate) + value + "号";
+    },
+    change:function (value) { // 改动时 获得时间
+      timeChange = [value[0],value[1]];
+      console.log(timeChange);
+    }
+  });
+  table.render({
+    elem:"#tableInDay",
+    cols:[[
+      {fixed:'left',title:'选定',type:'checkbox'},
+      {field:'idStaff',title:'职编'},
+      {field:'nameOfStaff',title:'姓名'},
+      {field:'groupOfStaff',title:'组别'},
+      {field:'hourOfStaff',title:'工时系数'}      
+    ]],
+    url:'/arrangement/getAllStaffAvailable',
+    parseData:function (res) {
+      return {
+        'code' : 0,
+        'msg' : '',
+        "count": res.length, 
+        'data' : res
+      }
+    },
+    toolbar:'#tableInDayPost' 
+  });
+  table.on('toolbar(tableInDay)',function(obj) {
+    var checkStatus = table.checkStatus(obj.config.id);
+    switch (obj.event) {
+      case 'arrangePost': 
+        // checkStatus.data为所有选中的人员数据，根据idStaff在后端中进行添加工作
+        var truePeriod = [
+          $$('#monthChoose').val() + '-' + (parseInt(projectToArrange.dataInDay.timeinfo.startdate) + timeChange[0]),
+          $$('#monthChoose').val() + '-' + (parseInt(projectToArrange.dataInDay.timeinfo.startdate) + timeChange[1])
+        ];
+        console.log(truePeriod);
+        $.ajax({
+          type: "get",
+          url: "/arrangement/arrangeOneProject",
+          data: {
+            _id: projectToArrange.dataInDay._id,
+            truePeriod: truePeriod,
+            staffList: checkStatus.data
+          },
+          dataType: "json",
+          success: function (res) {
+            console.log(res);
+            if (res.SUCCESS == 1 ) {
+              var thisIframe = parent.layer.getFrameIndex(window.name);
+              layui.data('res',{key:"SUCCESS",value:res.SUCCESS});
+              parent.layui.layer.close(thisIframe);
+            }
+          }
+        });
+      break;
+    }
+  });
+});
+</script>
+</body>
+</html>
